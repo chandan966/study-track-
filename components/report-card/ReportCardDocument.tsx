@@ -15,6 +15,10 @@ import {
   GraduationCap,
   Loader2,
   Share2,
+  QrCode,
+  Building,
+  UserCheck,
+  FileText,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -137,7 +141,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
 
   return (
     <div className="space-y-4">
-      {/* Action Bar */}
+      {/* Top Action Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-pink-100 shadow-xs print:hidden">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-200 text-pink-600 flex items-center justify-center">
@@ -145,10 +149,10 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
           </div>
           <div>
             <h3 className="text-xs font-bold text-zinc-900">
-              Official Academic Report Card &amp; Certificate
+              StudyTrack Official Academic Report Card &amp; Certificate
             </h3>
             <p className="text-[11px] text-zinc-500">
-              ID: <span className="font-mono text-pink-600 font-semibold">{data.certificateId}</span>
+              Certificate HASH: <span className="font-mono text-pink-600 font-bold">{data.certificateId}</span>
             </p>
           </div>
         </div>
@@ -161,19 +165,19 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
             {copied ? (
               <>
                 <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span className="text-emerald-600">Copied ID</span>
+                <span className="text-emerald-600">Copied HASH</span>
               </>
             ) : (
               <>
                 <Share2 className="w-3.5 h-3.5" />
-                <span>Copy ID</span>
+                <span>Copy HASH</span>
               </>
             )}
           </button>
 
           <button
             onClick={handlePrint}
-            className="px-3 py-2 rounded-xl border border-pink-200 text-xs font-semibold text-pink-700 bg-pink-50/50 hover:bg-pink-100 flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-2 rounded-xl border border-pink-200 text-xs font-semibold text-pink-700 bg-pink-50/50 hover:bg-pink-100 flex items-center gap-1.5 transition-colors"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Print / Save PDF</span>
@@ -187,7 +191,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
             {isExporting ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Exporting PDF...</span>
+                <span>Generating PDF...</span>
               </>
             ) : (
               <>
@@ -209,9 +213,10 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
         <div className="absolute right-[-40px] top-[-40px] w-96 h-96 bg-pink-50/50 rounded-full blur-3xl pointer-events-none -z-0" />
         <div className="absolute left-[-40px] bottom-[-40px] w-96 h-96 bg-pink-50/50 rounded-full blur-3xl pointer-events-none -z-0" />
 
-        {/* 1. Official Header */}
+        {/* 1. Official Header with Platform Name */}
         <div className="border-b-2 border-pink-100 pb-6 relative z-10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Website Name & Logo */}
             <div className="flex items-center gap-3.5">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-600 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-pink-500/30">
                 <GraduationCap className="w-8 h-8" />
@@ -231,38 +236,40 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
               </div>
             </div>
 
-            {/* Certificate Meta */}
-            <div className="text-right sm:text-right space-y-1">
+            {/* Certificate Meta & Period */}
+            <div className="text-left sm:text-right space-y-1">
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pink-50 text-pink-700 border border-pink-200">
-                {data.type} Performance Report
+                {data.type} Academic Report Card
               </span>
-              <p className="text-[11px] text-zinc-400 font-mono">
-                Cert ID: {data.certificateId}
-              </p>
               <p className="text-[11px] text-zinc-500 font-medium">
-                Period: {data.periodLabel}
+                Period: <span className="font-bold text-zinc-800">{data.periodLabel}</span>
+              </p>
+              <p className="text-[10px] text-zinc-400 font-mono">
+                HASH: {data.certificateId}
               </p>
             </div>
           </div>
         </div>
 
-        {/* 2. Student Identification Credentials */}
+        {/* 2. Student Identification & Personal Info Credentials */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-gradient-to-r from-pink-50/70 via-white to-pink-50/40 border border-pink-100 shadow-2xs relative z-10">
+          {/* Name of Student & Student ID */}
           <div>
             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-              Student Aspirant
+              Name of Student
             </span>
             <p className="text-sm font-bold text-zinc-900 truncate">
               {data.student.name}
             </p>
             <p className="text-[11px] text-zinc-500 truncate">
-              {data.student.email}
+              ID: {data.student.email}
             </p>
           </div>
 
+          {/* College / University & Course */}
           <div>
             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-              College / Institution
+              College / University
             </span>
             <p className="text-xs font-bold text-zinc-900 truncate">
               {data.student.college}
@@ -272,6 +279,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
             </p>
           </div>
 
+          {/* Academic Term */}
           <div>
             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
               Academic Term
@@ -284,9 +292,10 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
             </p>
           </div>
 
+          {/* Generated Time of Certificate */}
           <div>
             <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-              Generated Timestamp
+              Generated Time of Certificate
             </span>
             <p className="text-xs font-bold text-zinc-900">
               {data.generatedAt}
@@ -297,9 +306,9 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
           </div>
         </div>
 
-        {/* 3. Performance Summary & Grade Box */}
+        {/* 3. Performance Summary: Study Time Logged, Goal Achievement, Session, Task */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
-          {/* Official Letter Grade Badge */}
+          {/* Academic Grade Box */}
           <div className="md:col-span-1 p-5 rounded-2xl bg-white border-2 border-pink-300 text-center flex flex-col justify-center items-center shadow-sm">
             <span className="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider block">
               Academic Grade
@@ -312,8 +321,9 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
             </span>
           </div>
 
-          {/* Metric Stats Cards */}
+          {/* Metrics Row: Study Time Logged, Goal Achievement, Session & Tasks */}
           <div className="md:col-span-3 grid grid-cols-3 gap-3">
+            {/* Study Time Logged */}
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200/80 flex flex-col justify-between">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-zinc-500">Study Time Logged</span>
@@ -329,6 +339,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
               </div>
             </div>
 
+            {/* Goal Achievement */}
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200/80 flex flex-col justify-between">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-zinc-500">Goal Achievement</span>
@@ -347,6 +358,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
               </div>
             </div>
 
+            {/* Session & Task */}
             <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200/80 flex flex-col justify-between">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-zinc-500">Sessions &amp; Tasks</span>
@@ -356,7 +368,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
                 <p className="text-xl font-black text-zinc-900">
                   {data.performance.sessionCount} <span className="text-xs font-normal text-zinc-400">sessions</span>
                 </p>
-                <p className="text-[10px] text-zinc-500">
+                <p className="text-[10px] text-zinc-500 font-medium">
                   {data.performance.tasksCompletedCount} tasks completed
                 </p>
               </div>
@@ -364,14 +376,14 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
           </div>
         </div>
 
-        {/* 4. Subject Breakdown Table */}
+        {/* 4. Curriculum & Subject Distribution (e.g. 4 Subjects Studied) */}
         <div className="space-y-3 relative z-10">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold text-zinc-800 uppercase tracking-wider flex items-center gap-1.5">
               <Layers className="w-4 h-4 text-pink-600" />
               Curriculum &amp; Subject Distribution
             </h3>
-            <span className="text-[11px] text-zinc-400">
+            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-pink-100 text-pink-700 border border-pink-200">
               {data.subjectBreakdown.length} Subjects Studied
             </span>
           </div>
@@ -489,62 +501,70 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
           </p>
         </div>
 
-        {/* 7. Official Seal & Signatures Footer */}
-        <div className="pt-6 border-t-2 border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-6 relative z-10">
-          {/* Official Verification Seal */}
-          <div className="flex items-center gap-3">
-            <div className="w-16 h-16 rounded-full border-4 border-pink-500 bg-gradient-to-tr from-pink-100 to-white flex flex-col items-center justify-center text-center p-1 shadow-md shadow-pink-200">
-              <Award className="w-5 h-5 text-pink-600" />
-              <span className="text-[7px] font-black uppercase text-pink-700 tracking-tighter leading-tight mt-0.5">
-                STUDYTRACK
-                <br />
-                VERIFIED
-              </span>
-            </div>
-            <div>
-              <p className="text-xs font-bold text-zinc-900">
-                Official StudyTrack Record
-              </p>
-              <p className="text-[10px] text-zinc-400">
-                Digitally authenticated study session ledger
-              </p>
-              <p className="text-[9px] font-mono text-pink-600 font-semibold">
-                HASH: {data.certificateId}
-              </p>
-            </div>
-          </div>
-
-          {/* Dual Signatures */}
-          <div className="flex items-center gap-8 text-center">
-            {/* Student Digital Signature */}
-            <div className="space-y-1">
-              <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-4">
-                <span className="font-serif italic text-xs font-semibold text-zinc-800">
-                  {data.student.name}
+        {/* 7. Official Seal, Ledger & HASH Verification Footer */}
+        <div className="pt-6 border-t-2 border-pink-100 space-y-6 relative z-10">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            {/* STUDYTRACK VERIFIED Official Seal & HASH */}
+            <div className="flex items-center gap-4">
+              {/* Round Gold/Pink Stamp Seal */}
+              <div className="w-20 h-20 rounded-full border-4 border-pink-500 bg-gradient-to-tr from-pink-100 via-white to-pink-50 flex flex-col items-center justify-center text-center p-1 shadow-md shadow-pink-200 shrink-0">
+                <Award className="w-5 h-5 text-pink-600" />
+                <span className="text-[8px] font-black uppercase text-pink-700 tracking-tighter leading-tight mt-0.5">
+                  STUDYTRACK
+                  <br />
+                  VERIFIED
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                Student Signature
-              </span>
+
+              {/* Official StudyTrack Record & HASH */}
+              <div className="space-y-1">
+                <p className="text-sm font-extrabold text-zinc-900 leading-tight">
+                  Official StudyTrack Record
+                </p>
+                <p className="text-xs text-zinc-500">
+                  Digitally authenticated study session ledger
+                </p>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-pink-50 border border-pink-200 font-mono text-xs font-bold text-pink-700">
+                  <span>HASH:</span>
+                  <span>{data.certificateId}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Academic Board Dean Signature */}
-            <div className="space-y-1">
-              <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-4">
-                <span className="font-serif italic text-xs font-semibold text-pink-700">
-                  Dr. A. Verma
+            {/* Dual Digital Signatures */}
+            <div className="flex items-center gap-8 text-center">
+              {/* Student Digital Signature */}
+              <div className="space-y-1">
+                <div className="h-9 border-b-2 border-zinc-400 flex items-end justify-center px-4 min-w-[130px]">
+                  <span className="font-serif italic text-sm font-semibold text-zinc-800">
+                    {data.student.name}
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+                  Student Signature
                 </span>
               </div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                Academic Dean, StudyTrack
-              </span>
+
+              {/* Academic Dean Signature */}
+              <div className="space-y-1">
+                <div className="h-9 border-b-2 border-zinc-400 flex items-end justify-center px-4 min-w-[130px]">
+                  <span className="font-serif italic text-sm font-semibold text-pink-700">
+                    Dr. A. Verma
+                  </span>
+                </div>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+                  Academic Dean, StudyTrack
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Disclaimer */}
-        <div className="text-center text-[9px] text-zinc-400 pt-2 border-t border-zinc-100">
-          This document is generated by the StudyTrack Student Productivity System. Certified authentic study ledger for academic self-tracking and verification.
+        {/* Bottom Verification Footer Disclaimer */}
+        <div className="text-center text-[10px] text-zinc-400 pt-2 border-t border-zinc-100 flex items-center justify-between">
+          <span>Official StudyTrack Educational Platform Ledger</span>
+          <span className="font-mono text-pink-600 font-semibold">{data.certificateId}</span>
+          <span>Digitally Signed &bull; Validated A4 Certificate</span>
         </div>
       </div>
     </div>
