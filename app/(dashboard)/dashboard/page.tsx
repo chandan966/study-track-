@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { DailyGoalCard } from "@/components/dashboard/DailyGoalCard";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { ProgressPerspectiveViewer } from "@/components/dashboard/ProgressPerspectiveViewer";
+import { DashboardVisualHub } from "@/components/dashboard/DashboardVisualHub";
 import { RecentSessions } from "@/components/dashboard/RecentSessions";
 import { WeakTopicsCard } from "@/components/dashboard/WeakTopicsCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -155,7 +156,10 @@ export default function DashboardPage() {
         dailyGoalFormatted={stats?.dailyGoalFormatted || "6h"}
       />
 
-      {/* 6. Dashboard Split: Recent Sessions & Weak Topics */}
+      {/* 6. MULTI-COLOR CALENDAR & ANALYTICS VISUAL HUB */}
+      <DashboardVisualHub />
+
+      {/* 7. Dashboard Split: Recent Sessions & Weak Topics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentSessions sessions={recentSessions} />
         <WeakTopicsCard topics={weakTopics} />
