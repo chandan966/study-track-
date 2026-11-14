@@ -329,15 +329,18 @@ function VerifyContent() {
                 </div>
               </div>
 
-              {/* Dean Signature */}
+              {/* CEO Digital Signature */}
               <div className="space-y-0.5 text-center">
-                <div className="h-7 border-b border-zinc-400 flex items-end justify-center px-4 min-w-[130px]">
-                  <span className="font-serif italic text-xs font-semibold text-pink-700">
-                    Dr. A. Verma
-                  </span>
+                <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-2 min-w-[120px]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/signatures/ceo-signature.png"
+                    alt="CEO Signature - Chandan Ghanghav"
+                    className="h-7 w-auto max-w-[120px] object-contain"
+                  />
                 </div>
-                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider block">
-                  Academic Dean, StudyTrack
+                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider block">
+                  CEO, StudyTrack
                 </span>
               </div>
             </div>

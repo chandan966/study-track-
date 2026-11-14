@@ -88,7 +88,7 @@ export async function GET(req: Request) {
       authenticity: {
         seal: "STUDYTRACK VERIFIED ACADEMIC RECORD",
         ledgerStatus: "GENUINE_AND_ACTIVE",
-        officer: "Dr. A. Verma (Dean of Academic Progress)",
+        officer: "Chandan Ghanghav (CEO, StudyTrack Platform)",
         verificationHash: cert.certificateId,
       },
     });

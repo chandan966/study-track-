@@ -290,7 +290,7 @@ export async function GET(req: Request) {
       verification: {
         seal: "STUDYTRACK OFFICIAL ACADEMIC BOARD",
         issuer: "StudyTrack Platform Verification Service",
-        officer: "Dr. A. Verma (Dean of Academic Progress)",
+        officer: "Chandan Ghanghav (CEO, StudyTrack Platform)",
         digitalSignStatus: "VERIFIED_AUTHENTIC",
         isAuthentic: true,
       },
