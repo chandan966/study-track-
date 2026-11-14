@@ -9,6 +9,7 @@ import { DashboardVisualHub } from "@/components/dashboard/DashboardVisualHub";
 import { RecentSessions } from "@/components/dashboard/RecentSessions";
 import { WeakTopicsCard } from "@/components/dashboard/WeakTopicsCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
+import { ExamSelectorBanner } from "@/components/curriculum/ExamSelectorBanner";
 import { SubjectModal } from "@/components/subjects/SubjectModal";
 import { TopicModal } from "@/components/topics/TopicModal";
 import { TaskModal } from "@/components/tasks/TaskModal";
@@ -121,6 +122,9 @@ export default function DashboardPage() {
         onOpenTaskModal={() => setIsTaskModalOpen(true)}
         onOpenNoteModal={() => setIsNoteModalOpen(true)}
       />
+
+      {/* Target Exam & Curriculum Auto-Syllabus Selector */}
+      <ExamSelectorBanner onCurriculumLoaded={fetchDashboardData} />
 
       {/* 4. Due Revisions Alert Banner if any */}
       {dueRevisions.length > 0 && (

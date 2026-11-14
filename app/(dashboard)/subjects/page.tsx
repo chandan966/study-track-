@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { BookOpen, PlusCircle, MoreVertical, Clock, CheckCircle2, ArrowRight, Edit, Trash2 } from "lucide-react";
+import { BookOpen, PlusCircle, MoreVertical, Clock, CheckCircle2, ArrowRight, Edit, Trash2, Sparkles } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { SubjectModal } from "@/components/subjects/SubjectModal";
+import { ExamPresetModal } from "@/components/curriculum/ExamPresetModal";
 import { EmptyState } from "@/components/common/EmptyState";
 import { formatMinutes } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ export default function SubjectsPage() {
   const [subjects, setSubjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPresetModalOpen, setIsPresetModalOpen] = useState(false);
   const [editingSubject, setEditingSubject] = useState<any>(null);
 
   const fetchSubjects = async () => {
@@ -62,6 +64,12 @@ export default function SubjectsPage() {
         initialData={editingSubject}
       />
 
+      <ExamPresetModal
+        isOpen={isPresetModalOpen}
+        onClose={() => setIsPresetModalOpen(false)}
+        onCurriculumLoaded={fetchSubjects}
+      />
+
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
@@ -73,17 +81,29 @@ export default function SubjectsPage() {
           </p>
         </div>
 
-        <Button
-          size="sm"
-          onClick={() => {
-            setEditingSubject(null);
-            setIsModalOpen(true);
-          }}
-          className="bg-brand-500 hover:bg-brand-600 text-white shadow-sm shadow-pink-200"
-        >
-          <PlusCircle className="w-4 h-4 mr-1.5" />
-          Create Subject
-        </Button>
+        <div className="flex items-center gap-2.5">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsPresetModalOpen(true)}
+            className="border-pink-200 text-pink-700 bg-pink-50/60 hover:bg-pink-100 hover:text-pink-800"
+          >
+            <Sparkles className="w-4 h-4 mr-1.5 text-pink-600" />
+            Import Exam Syllabus (SSC, GATE...)
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={() => {
+              setEditingSubject(null);
+              setIsModalOpen(true);
+            }}
+            className="bg-brand-500 hover:bg-brand-600 text-white shadow-sm shadow-pink-200"
+          >
+            <PlusCircle className="w-4 h-4 mr-1.5" />
+            Create Subject
+          </Button>
+        </div>
       </div>
 
       {/* Subjects Grid */}

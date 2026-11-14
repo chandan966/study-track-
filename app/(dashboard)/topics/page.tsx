@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { BookOpen, PlusCircle, Filter, RotateCcw, Edit, Trash2, AlertCircle } from "lucide-react";
+import { BookOpen, PlusCircle, Filter, RotateCcw, Edit, Trash2, AlertCircle, Sparkles } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { TopicModal } from "@/components/topics/TopicModal";
 import { RevisionModal } from "@/components/revisions/RevisionModal";
+import { ExamPresetModal } from "@/components/curriculum/ExamPresetModal";
 import { EmptyState } from "@/components/common/EmptyState";
 
 function TopicsContent() {
@@ -23,6 +24,7 @@ function TopicsContent() {
 
   // Modals
   const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
+  const [isPresetModalOpen, setIsPresetModalOpen] = useState(false);
   const [editingTopic, setEditingTopic] = useState<any>(null);
   const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
   const [selectedTopicForRevision, setSelectedTopicForRevision] = useState<any>(null);
@@ -75,6 +77,12 @@ function TopicsContent() {
         initialData={editingTopic}
       />
 
+      <ExamPresetModal
+        isOpen={isPresetModalOpen}
+        onClose={() => setIsPresetModalOpen(false)}
+        onCurriculumLoaded={fetchTopicsAndSubjects}
+      />
+
       {selectedTopicForRevision && (
         <RevisionModal
           isOpen={isRevisionModalOpen}
@@ -99,18 +107,30 @@ function TopicsContent() {
           </p>
         </div>
 
-        <Button
-          size="sm"
-          onClick={() => {
-            setEditingTopic(null);
-            setIsTopicModalOpen(true);
-          }}
-          disabled={subjects.length === 0}
-          className="bg-brand-500 hover:bg-brand-600 text-white shadow-sm shadow-pink-200"
-        >
-          <PlusCircle className="w-4 h-4 mr-1.5" />
-          Add Topic
-        </Button>
+        <div className="flex items-center gap-2.5">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setIsPresetModalOpen(true)}
+            className="border-pink-200 text-pink-700 bg-pink-50/60 hover:bg-pink-100 hover:text-pink-800"
+          >
+            <Sparkles className="w-4 h-4 mr-1.5 text-pink-600" />
+            Import Exam Syllabus (SSC, GATE...)
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={() => {
+              setEditingTopic(null);
+              setIsTopicModalOpen(true);
+            }}
+            disabled={subjects.length === 0}
+            className="bg-brand-500 hover:bg-brand-600 text-white shadow-sm shadow-pink-200"
+          >
+            <PlusCircle className="w-4 h-4 mr-1.5" />
+            Add Topic
+          </Button>
+        </div>
       </div>
 
       {/* Filters Bar */}
