@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Trophy, ArrowRight } from "lucide-react";
+import { Sparkles, Trophy, ArrowRight, Award } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ export function DailyGoalCard({
             <p className="text-xs text-zinc-500 mt-1 font-medium">{todayDate}</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-pink-100 shadow-xs">
               <span className="text-xl">🔥</span>
               <div>
@@ -53,8 +53,15 @@ export function DailyGoalCard({
               </div>
             </div>
 
+            <Link href="/report-card">
+              <Button size="sm" variant="outline" className="border-pink-200 text-pink-700 bg-pink-50/50 hover:bg-pink-100 font-bold shadow-2xs">
+                <Award className="w-3.5 h-3.5 mr-1.5 text-pink-600" />
+                Report Card (PDF)
+              </Button>
+            </Link>
+
             <Link href="/timer">
-              <Button size="sm" className="bg-brand-500 hover:bg-brand-600 text-white shadow-sm shadow-pink-200">
+              <Button size="sm" className="bg-brand-500 hover:bg-brand-600 text-white shadow-sm shadow-pink-200 font-bold">
                 Start Studying <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </Button>
             </Link>

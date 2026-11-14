@@ -205,13 +205,18 @@ export function SessionCompleteModal({
           />
         </div>
 
-        <div className="flex justify-end gap-2.5 pt-2">
-          <Button type="button" variant="outline" size="sm" onClick={onClose} disabled={isLoading}>
-            Cancel
-          </Button>
-          <Button type="submit" size="sm" isLoading={isLoading} className="bg-brand-500 hover:bg-brand-600 text-white">
-            Save Session to Database
-          </Button>
+        <div className="flex items-center justify-between pt-2">
+          <span className="text-[11px] text-zinc-400">
+            📊 Download your Daily PDF Report Card from the dashboard anytime.
+          </span>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={onClose} disabled={isLoading}>
+              Cancel
+            </Button>
+            <Button type="submit" size="sm" isLoading={isLoading} className="bg-brand-500 hover:bg-brand-600 text-white font-bold">
+              Save Session to Database
+            </Button>
+          </div>
         </div>
       </form>
     </Modal>

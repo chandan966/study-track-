@@ -16,6 +16,7 @@ import {
   Clock,
   RotateCcw,
   Trophy,
+  Award,
   User,
   Settings,
 } from "lucide-react";
@@ -29,6 +30,7 @@ const mainTabs = [
 ];
 
 const moreItems = [
+  { name: "Report Card", href: "/report-card", icon: Award },
   { name: "Tasks", href: "/tasks", icon: ListTodo },
   { name: "Notes", href: "/notes", icon: FileText },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },

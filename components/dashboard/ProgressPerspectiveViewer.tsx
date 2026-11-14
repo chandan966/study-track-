@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   Calendar,
   Clock,
@@ -16,6 +17,8 @@ import {
   Lightbulb,
   HelpCircle,
   FileText,
+  Award,
+  Download,
 } from "lucide-react";
 import {
   BarChart,
@@ -68,43 +71,53 @@ export function ProgressPerspectiveViewer({
           </p>
         </div>
 
-        {/* Tab Controls */}
-        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-pink-200/80 shadow-xs mb-2 sm:mb-0">
-          <button
-            onClick={() => setActiveTab("daily")}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-              activeTab === "daily"
-                ? "bg-brand-500 text-white shadow-sm shadow-pink-200"
-                : "text-zinc-600 hover:text-brand-600 hover:bg-brand-50/50"
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            Daily ({todaySessions.length})
-          </button>
+        {/* Tab Controls & Report Card PDF Trigger */}
+        <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-0">
+          <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-pink-200/80 shadow-xs">
+            <button
+              onClick={() => setActiveTab("daily")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                activeTab === "daily"
+                  ? "bg-brand-500 text-white shadow-sm shadow-pink-200"
+                  : "text-zinc-600 hover:text-brand-600 hover:bg-brand-50/50"
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              Daily ({todaySessions.length})
+            </button>
 
-          <button
-            onClick={() => setActiveTab("weekly")}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-              activeTab === "weekly"
-                ? "bg-brand-500 text-white shadow-sm shadow-pink-200"
-                : "text-zinc-600 hover:text-brand-600 hover:bg-brand-50/50"
-            }`}
-          >
-            <TrendingUp className="w-3.5 h-3.5" />
-            Weekly ({weeklyProgress?.totalHours || 0}h)
-          </button>
+            <button
+              onClick={() => setActiveTab("weekly")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                activeTab === "weekly"
+                  ? "bg-brand-500 text-white shadow-sm shadow-pink-200"
+                  : "text-zinc-600 hover:text-brand-600 hover:bg-brand-50/50"
+              }`}
+            >
+              <TrendingUp className="w-3.5 h-3.5" />
+              Weekly ({weeklyProgress?.totalHours || 0}h)
+            </button>
 
-          <button
-            onClick={() => setActiveTab("monthly")}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-              activeTab === "monthly"
-                ? "bg-brand-500 text-white shadow-sm shadow-pink-200"
-                : "text-zinc-600 hover:text-brand-600 hover:bg-brand-50/50"
-            }`}
+            <button
+              onClick={() => setActiveTab("monthly")}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                activeTab === "monthly"
+                  ? "bg-brand-500 text-white shadow-sm shadow-pink-200"
+                  : "text-zinc-600 hover:text-brand-600 hover:bg-brand-50/50"
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              Monthly ({monthlyProgress?.totalHours || 0}h)
+            </button>
+          </div>
+
+          <Link
+            href="/report-card"
+            className="px-3.5 py-1.5 rounded-xl border border-pink-300 text-pink-700 bg-pink-50 hover:bg-pink-100 text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all"
           >
-            <Calendar className="w-3.5 h-3.5" />
-            Monthly ({monthlyProgress?.totalHours || 0}h)
-          </button>
+            <Award className="w-3.5 h-3.5 text-pink-600" />
+            <span>Download Report (PDF)</span>
+          </Link>
         </div>
       </div>
 

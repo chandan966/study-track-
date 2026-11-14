@@ -14,6 +14,7 @@ import {
   Clock,
   RotateCcw,
   Trophy,
+  Award,
   User,
   Settings,
   GraduationCap,
@@ -24,6 +25,7 @@ import { cn } from "@/lib/utils";
 const mainNavItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Timer", href: "/timer", icon: Timer },
+  { name: "Report Card", href: "/report-card", icon: Award },
   { name: "Calendar", href: "/calendar", icon: CalendarDays },
   { name: "Subjects", href: "/subjects", icon: BookOpen },
   { name: "Tasks", href: "/tasks", icon: ListTodo },
