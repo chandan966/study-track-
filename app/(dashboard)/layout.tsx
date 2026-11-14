@@ -19,6 +19,21 @@ export default function DashboardLayout({
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full">
           {children}
         </main>
+        {/* Dashboard Footer */}
+        <footer className="no-print border-t border-pink-100 py-4 px-6 text-xs text-zinc-500 max-w-7xl mx-auto w-full flex flex-wrap items-center justify-between gap-3">
+          <p>© 2026 StudyTrack. All rights reserved.</p>
+          <p>
+            <a
+              href="https://www.instagram.com/trigger_toofan"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="webdevchandna Instagram (opens in new tab)"
+              className="font-semibold text-pink-600 hover:text-pink-700 hover:underline transition-colors"
+            >
+              webdevchandna
+            </a>
+          </p>
+        </footer>
       </div>
 
       {/* Mobile Bottom Navigation */}

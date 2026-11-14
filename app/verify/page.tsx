@@ -228,6 +228,37 @@ function VerifyContent() {
           </div>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="no-print bg-white border-t border-pink-100 py-8 text-xs text-zinc-500 mt-12">
+        <div className="max-w-4xl mx-auto px-4 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-5 h-5 rounded bg-pink-500 flex items-center justify-center text-white">
+              <GraduationCap className="w-3.5 h-3.5" />
+            </div>
+            <span className="font-bold text-zinc-900">StudyTrack</span>
+            <span className="text-zinc-400">© 2026. All rights reserved.</span>
+          </div>
+
+          <p>
+            <a
+              href="https://www.instagram.com/trigger_toofan"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="webdevchandna Instagram (opens in new tab)"
+              className="font-semibold text-pink-600 hover:text-pink-700 hover:underline transition-colors"
+            >
+              webdevchandna
+            </a>
+          </p>
+
+          <div className="flex items-center gap-4">
+            <Link href="/" className="hover:text-pink-600 font-medium">Home</Link>
+            <Link href="/login" className="hover:text-pink-600 font-medium">Sign In</Link>
+            <Link href="/dashboard" className="hover:text-pink-600 font-medium">Dashboard</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
