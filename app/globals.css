@@ -48,3 +48,50 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px -4px rgba(236, 72, 153, 0.12);
 }
+
+/* Dedicated Print Styles for Single-Page Certificate */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #18181b !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide navigation, sidebars, buttons and search controls */
+  header,
+  nav,
+  aside,
+  footer,
+  .print\\:hidden,
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Unconstrain page margins during print */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Certificate element formatting for exact 1-page A4 print */
+  .certificate-card {
+    border: 2px solid #ec4899 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+  }
+}

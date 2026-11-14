@@ -9,18 +9,10 @@ import {
   CheckCircle2,
   AlertCircle,
   GraduationCap,
-  Clock,
-  Sparkles,
-  BookOpen,
-  Layers,
-  Award,
-  Medal,
-  Printer,
-  ArrowRight,
   Loader2,
-  Calendar,
-  Building,
+  ArrowRight,
 } from "lucide-react";
+import { ReportCardDocument, ReportCardData } from "@/components/report-card/ReportCardDocument";
 
 function VerifyContent() {
   const searchParams = useSearchParams();
@@ -61,10 +53,54 @@ function VerifyContent() {
     }
   }, [initialId]);
 
+  const toReportCardData = (cert: any): ReportCardData => ({
+    type: (cert.type || "daily") as "daily" | "weekly" | "monthly",
+    periodLabel: cert.periodLabel || "Verified Study Period",
+    generatedAt: cert.issuedAt || "Today",
+    certificateId: cert.certificateId,
+    student: {
+      name: cert.studentName || "Student Aspirant",
+      email: cert.studentEmail || "",
+      college: cert.college || "University / Institute",
+      course: cert.course || "SSC CGL / Govt Exam & Tech",
+      branch: cert.branch || "General Studies",
+      academicYear: cert.academicYear || "Final Year",
+      semester: cert.semester || "Semester I",
+      streak: 14,
+    },
+    performance: {
+      totalStudyMinutes: cert.totalStudyMinutes || 0,
+      totalStudyFormatted: cert.totalStudyFormatted || "0m",
+      targetGoalMinutes: 360,
+      targetGoalFormatted: cert.targetGoalFormatted || "6h 0m",
+      goalPercentage: cert.goalPercentage || 0,
+      grade: cert.grade || "A+",
+      gradeLabel: cert.gradeLabel || "Outstanding (Distinction)",
+      gradeColor:
+        cert.goalPercentage >= 80
+          ? "text-pink-700 bg-pink-50 border-pink-300"
+          : "text-amber-700 bg-amber-50 border-amber-300",
+      remarks:
+        "This academic study record is authenticated and certified authentic by StudyTrack Educational Board.",
+      sessionCount: cert.sessionCount || 0,
+      tasksCompletedCount: cert.tasksCompletedCount || 0,
+    },
+    subjectBreakdown: cert.subjects || [],
+    sessions: [],
+    completedTasks: [],
+    verification: {
+      seal: "STUDYTRACK VERIFIED ACADEMIC RECORD",
+      issuer: "StudyTrack Platform Verification Service",
+      officer: "Chandan Ghanghav (CEO, StudyTrack Platform)",
+      digitalSignStatus: "VERIFIED_AUTHENTIC",
+      isAuthentic: true,
+    },
+  });
+
   return (
     <div className="min-h-screen bg-study-bg text-zinc-900 flex flex-col selection:bg-pink-200">
-      {/* Public Navigation Header */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-pink-100">
+      {/* Public Navigation Header (Hidden on Print) */}
+      <header className="no-print sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-pink-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white shadow-md shadow-pink-200">
@@ -94,8 +130,8 @@ function VerifyContent() {
 
       {/* Main Verification Container */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
-        {/* Verification Portal Hero Banner */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
+        {/* Verification Portal Hero Banner (Hidden on Print) */}
+        <div className="no-print text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-100 border border-pink-200 text-pink-700 text-xs font-bold">
             <ShieldCheck className="w-4 h-4 text-pink-600" />
             Parent &amp; Institutional Verification Portal
@@ -108,8 +144,8 @@ function VerifyContent() {
           </p>
         </div>
 
-        {/* Verification Input Box */}
-        <div className="bg-white p-4 sm:p-6 rounded-3xl border-2 border-pink-100 shadow-lg shadow-pink-500/5 max-w-2xl mx-auto">
+        {/* Verification Input Box (Hidden on Print) */}
+        <div className="no-print bg-white p-4 sm:p-6 rounded-3xl border-2 border-pink-100 shadow-lg shadow-pink-500/5 max-w-2xl mx-auto">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -153,9 +189,9 @@ function VerifyContent() {
           </div>
         </div>
 
-        {/* Verification Result Area */}
+        {/* Verification Error Result */}
         {errorMsg && (
-          <div className="p-6 bg-red-50/80 border-2 border-red-200 rounded-3xl max-w-2xl mx-auto flex items-start gap-3.5 text-xs text-red-800 animate-in fade-in">
+          <div className="no-print p-6 bg-red-50/80 border-2 border-red-200 rounded-3xl max-w-2xl mx-auto flex items-start gap-3.5 text-xs text-red-800 animate-in fade-in">
             <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
             <div className="space-y-1">
               <h4 className="font-bold text-sm text-red-900">Certificate Verification Failed</h4>
@@ -167,183 +203,28 @@ function VerifyContent() {
           </div>
         )}
 
+        {/* Verified Result: Official Authentic Single-Page Certificate Document */}
         {certData && certData.isValid && (
-          <div className="bg-white p-6 sm:p-9 rounded-3xl border-2 border-emerald-300 shadow-xl max-w-3xl mx-auto space-y-6 animate-in fade-in duration-300 relative overflow-hidden">
-            {/* Background Seal Watermark */}
-            <div className="absolute right-[-30px] top-[-30px] w-64 h-64 bg-emerald-50/40 rounded-full blur-2xl pointer-events-none" />
-
-            {/* Official Verification Header Banner */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border border-emerald-200 flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-4 animate-in fade-in duration-300">
+            {/* Authenticated Verification Pill Banner (Hidden on Print) */}
+            <div className="no-print p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border-2 border-emerald-300 flex items-center justify-between gap-3 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-xs">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-black uppercase text-emerald-800 tracking-wider">
-                      OFFICIAL STUDYTRACK VERIFIED RECORD
-                    </span>
-                    <span className="px-2 py-0.2 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                      GENUINE &bull; 100% AUTHENTIC
-                    </span>
-                  </div>
+                  <h3 className="text-xs font-black uppercase text-emerald-800 tracking-wider">
+                    VERIFIED GENUINE STUDY RECORD &bull; 100% AUTHENTIC
+                  </h3>
                   <p className="text-xs text-zinc-600 mt-0.5">
-                    This student record is digitally signed and validated in the StudyTrack academic ledger.
+                    Certificate <strong className="font-mono text-emerald-900">{certData.certificateId}</strong> is active and validated on the StudyTrack educational ledger.
                   </p>
                 </div>
               </div>
-
-              <button
-                onClick={() => window.print()}
-                className="px-3 py-1.5 rounded-xl border border-emerald-200 text-xs font-bold text-emerald-800 bg-white hover:bg-emerald-50 flex items-center gap-1.5 transition-colors shadow-2xs"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>Print Record</span>
-              </button>
             </div>
 
-            {/* Student & Period Credentials */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 rounded-2xl bg-zinc-50 border border-zinc-200 text-xs">
-              <div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                  Student Name
-                </span>
-                <p className="font-extrabold text-zinc-900 text-sm truncate">{certData.studentName}</p>
-                <p className="text-[11px] text-zinc-500 truncate">{certData.studentEmail}</p>
-              </div>
-
-              <div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                  Target Preparation
-                </span>
-                <p className="font-bold text-zinc-900 truncate">{certData.course}</p>
-                <p className="text-[11px] text-zinc-500 truncate">{certData.college}</p>
-              </div>
-
-              <div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                  Study Period
-                </span>
-                <p className="font-bold text-zinc-900 truncate">{certData.periodLabel}</p>
-                <p className="text-[11px] text-zinc-500">{certData.type.toUpperCase()} Record</p>
-              </div>
-
-              <div>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                  Academic Grade
-                </span>
-                <p className="text-base font-black text-pink-600">{certData.grade}</p>
-                <p className="text-[10px] font-bold text-emerald-700">{certData.gradeLabel}</p>
-              </div>
-            </div>
-
-            {/* Performance Metrics Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div className="p-3.5 rounded-2xl bg-pink-50/50 border border-pink-200">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase block">Verified Study Time</span>
-                <p className="text-xl font-black text-pink-600 mt-0.5">{certData.totalStudyFormatted}</p>
-                <p className="text-[10px] text-zinc-500">Target Goal: {certData.targetGoalFormatted}</p>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-200">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase block">Goal Achievement</span>
-                <p className="text-xl font-black text-emerald-600 mt-0.5">{certData.goalPercentage}%</p>
-                <p className="text-[10px] text-zinc-500">
-                  {certData.goalPercentage >= 100 ? "Daily target exceeded 🎉" : "Daily target in progress"}
-                </p>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-blue-50/50 border border-blue-200">
-                <span className="text-[10px] font-bold text-zinc-500 uppercase block">Study Sessions</span>
-                <p className="text-xl font-black text-blue-600 mt-0.5">{certData.sessionCount} Sessions</p>
-                <p className="text-[10px] text-zinc-500">{certData.tasksCompletedCount} Tasks Completed</p>
-              </div>
-            </div>
-
-            {/* Subject Distribution Breakdown */}
-            <div className="rounded-2xl border border-zinc-200 overflow-hidden">
-              <div className="px-4 py-2.5 bg-zinc-50 border-b border-zinc-200 flex items-center justify-between text-xs font-bold text-zinc-700">
-                <span className="flex items-center gap-1.5 uppercase text-[10px] tracking-wider">
-                  <Layers className="w-3.5 h-3.5 text-pink-600" />
-                  Curriculum &amp; Subject Distribution
-                </span>
-                <span className="text-[11px] text-pink-600 font-bold">
-                  {certData.subjects?.length || 0} Subjects Studied
-                </span>
-              </div>
-
-              <table className="w-full text-left text-xs">
-                <thead className="bg-zinc-50/50 border-b border-zinc-100 text-zinc-500 font-bold text-[10px]">
-                  <tr>
-                    <th className="py-2 px-4">Subject</th>
-                    <th className="py-2 px-3 text-center">Sessions</th>
-                    <th className="py-2 px-3 text-center">Topics</th>
-                    <th className="py-2 px-4 text-right">Hours Logged</th>
-                    <th className="py-2 px-4 text-right">Share (%)</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100 text-xs">
-                  {certData.subjects?.map((sub: any, idx: number) => (
-                    <tr key={idx} className="hover:bg-zinc-50/50">
-                      <td className="py-2 px-4 font-bold text-zinc-900 flex items-center gap-2">
-                        <div
-                          className="w-2.5 h-2.5 rounded-md"
-                          style={{ backgroundColor: sub.color || "#EC4899" }}
-                        />
-                        <span>{sub.name}</span>
-                      </td>
-                      <td className="py-2 px-3 text-center text-zinc-600">{sub.sessionCount}</td>
-                      <td className="py-2 px-3 text-center text-zinc-600">{sub.uniqueTopicsCount}</td>
-                      <td className="py-2 px-4 text-right font-bold text-zinc-900">
-                        {Math.floor(sub.duration / 60)}h {sub.duration % 60}m
-                      </td>
-                      <td className="py-2 px-4 text-right font-bold text-pink-600">{sub.percentage}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Bottom Verification Seal & HASH */}
-            <div className="pt-4 border-t-2 border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="w-16 h-16 rounded-full border-[3px] border-[#EC4899] bg-white flex flex-col items-center justify-center text-center p-1 shadow-sm shrink-0">
-                  <Medal className="w-5 h-5 text-[#EC4899]" />
-                  <span className="text-[7px] font-black uppercase text-[#DB2777] tracking-tight leading-tight mt-0.5">
-                    STUDYTRACK
-                    <br />
-                    VERIFIED
-                  </span>
-                </div>
-
-                <div className="space-y-1">
-                  <h4 className="text-sm font-extrabold text-zinc-900 leading-tight">
-                    Official StudyTrack Record
-                  </h4>
-                  <p className="text-[11px] text-zinc-500">
-                    Digitally authenticated study session ledger
-                  </p>
-                  <div className="inline-block px-3 py-0.5 rounded-full bg-[#FFF1F7] border border-[#FBCFE8] font-mono text-xs font-bold text-[#BE185D]">
-                    HASH: {certData.certificateId}
-                  </div>
-                </div>
-              </div>
-
-              {/* CEO Digital Signature */}
-              <div className="space-y-0.5 text-center">
-                <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-2 min-w-[120px]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/signatures/ceo-signature.png"
-                    alt="CEO Signature - Chandan Ghanghav"
-                    className="h-7 w-auto max-w-[120px] object-contain"
-                  />
-                </div>
-                <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider block">
-                  CEO, StudyTrack
-                </span>
-              </div>
-            </div>
+            {/* The Actual Official Single-Page Report Card Document */}
+            <ReportCardDocument data={toReportCardData(certData)} />
           </div>
         )}
       </main>

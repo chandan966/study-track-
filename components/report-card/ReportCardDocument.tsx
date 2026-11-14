@@ -14,11 +14,11 @@ import {
   GraduationCap,
   Loader2,
   Share2,
-  Calendar,
   Medal,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { CEO_SIGNATURE_BASE64 } from "@/lib/signature";
 
 export interface ReportCardData {
   type: "daily" | "weekly" | "monthly";
@@ -99,28 +99,48 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
 
     try {
       const element = printRef.current;
+
+      // Render crisp canvas
       const canvas = await html2canvas(element, {
-        scale: 2.5,
+        scale: 2,
         useCORS: true,
+        allowTaint: true,
         logging: false,
         backgroundColor: "#ffffff",
+        windowWidth: 1024,
       });
 
-      const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/png", 1.0);
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfPageWidth = 210;
+      const pdfPageHeight = 297;
+      const margin = 8;
+      const printableWidth = pdfPageWidth - margin * 2;
+      const printableHeight = pdfPageHeight - margin * 2;
 
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, Math.min(297, pdfHeight));
-      pdf.save(`StudyTrack_${data.type.toUpperCase()}_ReportCard_${data.certificateId}.pdf`);
+      let renderWidth = printableWidth;
+      let renderHeight = (canvas.height * printableWidth) / canvas.width;
+
+      if (renderHeight > printableHeight) {
+        const ratio = printableHeight / renderHeight;
+        renderHeight = printableHeight;
+        renderWidth = renderWidth * ratio;
+      }
+
+      const xOffset = margin + (printableWidth - renderWidth) / 2;
+      const yOffset = margin + (printableHeight - renderHeight) / 2;
+
+      pdf.addImage(imgData, "PNG", xOffset, yOffset, renderWidth, renderHeight);
+      pdf.save(`StudyTrack_${data.type.toUpperCase()}_Certificate_${data.certificateId}.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
-      alert("Failed to generate PDF. You can also click 'Print / Save PDF'!");
+      // Seamless browser print fallback
+      window.print();
     } finally {
       setIsExporting(false);
     }
@@ -138,8 +158,8 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
 
   return (
     <div className="space-y-4">
-      {/* Top Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-pink-100 shadow-xs print:hidden">
+      {/* Top Action Toolbar (Hidden during print) */}
+      <div className="no-print flex flex-wrap items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-pink-100 shadow-xs">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-200 text-pink-600 flex items-center justify-center">
             <Award className="w-5 h-5" />
@@ -162,7 +182,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
             {copied ? (
               <>
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                <span className="text-emerald-600">Copied HASH</span>
+                <span className="text-emerald-600 font-bold">Copied HASH</span>
               </>
             ) : (
               <>
@@ -174,7 +194,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
 
           <button
             onClick={handlePrint}
-            className="px-3 py-1.5 rounded-xl border border-pink-200 text-xs font-semibold text-pink-700 bg-pink-50/50 hover:bg-pink-100 flex items-center gap-1.5 transition-colors"
+            className="px-3.5 py-1.5 rounded-xl border border-pink-200 text-xs font-semibold text-pink-700 bg-pink-50/50 hover:bg-pink-100 flex items-center gap-1.5 transition-colors"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Print A4</span>
@@ -205,7 +225,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
       {/* ============================================================== */}
       <div
         ref={printRef}
-        className="bg-white p-7 sm:p-9 rounded-3xl border-2 border-pink-200 shadow-xl max-w-4xl mx-auto space-y-4 relative overflow-hidden text-zinc-900"
+        className="certificate-card bg-white p-7 sm:p-9 rounded-3xl border-2 border-pink-200 shadow-xl max-w-4xl mx-auto space-y-4 relative overflow-hidden text-zinc-900"
         style={{
           width: "100%",
           maxWidth: "850px",
@@ -287,7 +307,6 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
         </div>
 
         {/* 2. PROPER BOX: PERFORMANCE METRICS ROW */}
-        {/* Study Time Logged | Goal Achievement | Sessions & Tasks */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 relative z-10">
           {/* Box 1: Study Time Logged */}
           <div className="p-3.5 rounded-2xl bg-zinc-50/80 border border-zinc-200 flex items-center justify-between shadow-2xs">
@@ -447,7 +466,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
           <div className="flex items-center gap-6 text-center">
             {/* Student Digital Signature */}
             <div className="space-y-0.5">
-              <div className="h-7 border-b border-zinc-400 flex items-end justify-center px-3 min-w-[110px]">
+              <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-3 min-w-[110px]">
                 <span className="font-serif italic text-xs font-semibold text-zinc-800">
                   {data.student.name}
                 </span>
@@ -457,12 +476,12 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
               </span>
             </div>
 
-            {/* CEO Digital Signature */}
+            {/* CEO Digital Signature with Embedded Base64 Image */}
             <div className="space-y-0.5">
               <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-2 min-w-[120px]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/signatures/ceo-signature.png"
+                  src={CEO_SIGNATURE_BASE64}
                   alt="CEO Signature - Chandan Ghanghav"
                   className="h-7 w-auto max-w-[120px] object-contain"
                 />
@@ -478,7 +497,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
         <div className="text-center text-[9px] text-zinc-400 pt-1.5 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-2">
           <span>StudyTrack Verified Academic Productivity Ledger</span>
           <span className="font-mono text-pink-600 font-bold">
-            Verify at: {typeof window !== "undefined" ? window.location.origin : ""}/verify?id={data.certificateId}
+            Verify online at: /verify?id={data.certificateId}
           </span>
           <span>Certified Single-Page A4 Transcript</span>
         </div>
