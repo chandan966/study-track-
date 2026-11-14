@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String            @id @default(cuid())
+  name                 String
+  email                String            @unique
+  password             String
+  image                String?
+  college              String?
+  course               String?
+  branch               String?
+  academicYear         String?
+  semester             String?
+  dailyGoalMinutes     Int               @default(360)
+  preferredStudyHours  String?
+  soundEnabled         Boolean           @default(true)
+  notificationsEnabled Boolean           @default(true)
+  theme                String            @default("light")
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  subjects             Subject[]
+  topics               Topic[]
+  studySessions        StudySession[]
+  notes                StudyNote[]
+  tasks                Task[]
+  revisions            Revision[]
+  achievements         UserAchievement[]
+  notifications        Notification[]
+
+  @@map("users")
+}
+
+model Subject {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  color         String         @default("#EC4899")
+  icon          String?        @default("book-open")
+  targetHours   Float          @default(50)
+  isArchived    Boolean        @default(false)
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  topics        Topic[]
+  studySessions StudySession[]
+  notes         StudyNote[]
+  tasks         Task[]
+
+  @@map("subjects")
+}
+
+model Topic {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  status        String         @default("NOT_STARTED")
+  understanding Int            @default(0)
+  difficulty    String         @default("MEDIUM")
+  revisionDate  DateTime?
+  subjectId     String
+  subject       Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  studySessions StudySession[]
+  notes         StudyNote[]
+  revisions     Revision[]
+
+  @@map("topics")
+}
+
+model StudySession {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectId         String
+  subject           Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  topicId           String?
+  topic             Topic?    @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  mode              String    @default("NORMAL")
+  durationMinutes   Int
+  durationSeconds   Int
+  startTime         DateTime
+  endTime           DateTime
+  whatStudied       String?
+  whatLearned       String?
+  whatUnderstood    String?
+  whatNotUnderstood String?
+  difficulty        String?   @default("MEDIUM")
+  personalNotes     String?
+  createdAt         DateTime  @default(now())
+
+  @@map("study_sessions")
+}
+
+model StudyNote {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectId String?
+  subject   Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  topicId   String?
+  topic     Topic?   @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  title     String
+  content   String
+  tags      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("study_notes")
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subjectId   String?
+  subject     Subject?  @relation(fields: [subjectId], references: [id], onDelete: SetNull)
+  title       String
+  description String?
+  dueDate     DateTime?
+  priority    String    @default("MEDIUM")
+  status      String    @default("PENDING")
+  isRecurring Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("tasks")
+}
+
+model Revision {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId      String
+  topic        Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  intervalDays Int       @default(1)
+  scheduledFor DateTime
+  completedAt  DateTime?
+  isCompleted  Boolean   @default(false)
+  notes        String?
+  createdAt    DateTime  @default(now())
+
+  @@map("revisions")
+}
+
+model Achievement {
+  id          String            @id @default(cuid())
+  code        String            @unique
+  title       String
+  description String
+  icon        String
+  category    String            @default("GENERAL")
+  targetValue Int
+  users       UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}

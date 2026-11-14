@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-pink: #EC4899;
+  --dark-pink: #DB2777;
+  --light-pink: #FCE7F3;
+  --very-light-pink: #FDF2F8;
+  --white: #FFFFFF;
+  --dark-text: #18181B;
+  --secondary-text: #71717A;
+  --border: #F1F1F1;
+  --background: #FFF7FB;
+}
+
+body {
+  color: var(--dark-text);
+  background: var(--background);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FFF7FB;
+}
+::-webkit-scrollbar-thumb {
+  background: #FBCFE8;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #F472B6;
+}
+
+/* Modern clean card shadow */
+.study-card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(236, 72, 153, 0.05), 0 1px 2px -1px rgba(236, 72, 153, 0.05);
+}
+
+.study-hover-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.study-hover-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -4px rgba(236, 72, 153, 0.12);
+}
