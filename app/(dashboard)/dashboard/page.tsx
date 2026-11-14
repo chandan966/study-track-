@@ -4,16 +4,17 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { DailyGoalCard } from "@/components/dashboard/DailyGoalCard";
 import { StatCards } from "@/components/dashboard/StatCards";
+import { ProgressPerspectiveViewer } from "@/components/dashboard/ProgressPerspectiveViewer";
 import { RecentSessions } from "@/components/dashboard/RecentSessions";
 import { WeakTopicsCard } from "@/components/dashboard/WeakTopicsCard";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { SubjectModal } from "@/components/subjects/SubjectModal";
+import { TopicModal } from "@/components/topics/TopicModal";
 import { TaskModal } from "@/components/tasks/TaskModal";
 import { NoteModal } from "@/components/notes/NoteModal";
 import { EmptyState } from "@/components/common/EmptyState";
-import { BookOpen, Sparkles, RotateCcw } from "lucide-react";
+import { BookOpen, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -23,6 +24,7 @@ export default function DashboardPage() {
 
   // Modal controls for quick actions
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
+  const [isTopicModalOpen, setIsTopicModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
 
@@ -54,6 +56,9 @@ export default function DashboardPage() {
   }, []);
 
   const stats = data?.stats;
+  const todaySessions = data?.todaySessions || [];
+  const weeklyProgress = data?.weeklyProgress;
+  const monthlyProgress = data?.monthlyProgress;
   const recentSessions = data?.recentSessions || [];
   const weakTopics = data?.weakTopics || [];
   const dueRevisions = data?.dueRevisions || [];
@@ -65,6 +70,12 @@ export default function DashboardPage() {
         isOpen={isSubjectModalOpen}
         onClose={() => setIsSubjectModalOpen(false)}
         onSaved={fetchDashboardData}
+      />
+      <TopicModal
+        isOpen={isTopicModalOpen}
+        onClose={() => setIsTopicModalOpen(false)}
+        onSaved={fetchDashboardData}
+        subjects={subjects}
       />
       <TaskModal
         isOpen={isTaskModalOpen}
@@ -105,6 +116,7 @@ export default function DashboardPage() {
       {/* 3. Quick Actions Bar */}
       <QuickActions
         onOpenSubjectModal={() => setIsSubjectModalOpen(true)}
+        onOpenTopicModal={() => setIsTopicModalOpen(true)}
         onOpenTaskModal={() => setIsTaskModalOpen(true)}
         onOpenNoteModal={() => setIsNoteModalOpen(true)}
       />
@@ -134,13 +146,22 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* 5. Main Dashboard Split: Recent Sessions & Weak Topics */}
+      {/* 5. MULTI-PERIOD PROGRESS & TAKEAWAYS VIEWER (Daily | Weekly | Monthly) */}
+      <ProgressPerspectiveViewer
+        todaySessions={todaySessions}
+        weeklyProgress={weeklyProgress}
+        monthlyProgress={monthlyProgress}
+        todayStudyFormatted={stats?.todayStudyFormatted || "0m"}
+        dailyGoalFormatted={stats?.dailyGoalFormatted || "6h"}
+      />
+
+      {/* 6. Dashboard Split: Recent Sessions & Weak Topics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RecentSessions sessions={recentSessions} />
         <WeakTopicsCard topics={weakTopics} />
       </div>
 
-      {/* 6. First-Time Empty State if zero sessions ever logged */}
+      {/* 7. First-Time Empty State if zero sessions ever logged */}
       {!isLoading && stats?.totalSessionsOverall === 0 && (
         <EmptyState
           icon={BookOpen}
