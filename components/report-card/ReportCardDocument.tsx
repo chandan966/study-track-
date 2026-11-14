@@ -5,16 +5,15 @@ import {
   Download,
   Printer,
   Sparkles,
-  ShieldCheck,
   CheckCircle2,
   Clock,
-  BookOpen,
-  Award,
   Layers,
   GraduationCap,
   Loader2,
   Share2,
   Medal,
+  ShieldCheck,
+  QrCode,
 } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -100,14 +99,24 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
     try {
       const element = printRef.current;
 
-      // Render crisp canvas
+      // Render ultra-sharp canvas with fixed desktop width regardless of device screen size
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: 2.5, // 300 DPI equivalent
         useCORS: true,
         allowTaint: true,
         logging: false,
         backgroundColor: "#ffffff",
         windowWidth: 1024,
+        onclone: (clonedDoc) => {
+          const clonedElement = clonedDoc.getElementById("studytrack-certificate-node");
+          if (clonedElement) {
+            clonedElement.style.width = "820px";
+            clonedElement.style.maxWidth = "820px";
+            clonedElement.style.minWidth = "820px";
+            clonedElement.style.margin = "0 auto";
+            clonedElement.style.boxShadow = "none";
+          }
+        },
       });
 
       const imgData = canvas.toDataURL("image/png", 1.0);
@@ -117,29 +126,32 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
         format: "a4",
       });
 
-      const pdfPageWidth = 210;
-      const pdfPageHeight = 297;
-      const margin = 8;
-      const printableWidth = pdfPageWidth - margin * 2;
-      const printableHeight = pdfPageHeight - margin * 2;
+      // A4 portrait dimensions: 210mm x 297mm
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 8; // 8mm margins
+      const printableWidth = pageWidth - margin * 2; // 194mm
+      const printableHeight = pageHeight - margin * 2; // 281mm
 
       let renderWidth = printableWidth;
       let renderHeight = (canvas.height * printableWidth) / canvas.width;
 
+      // Scale to fit strictly on single A4 page without spilling
       if (renderHeight > printableHeight) {
         const ratio = printableHeight / renderHeight;
         renderHeight = printableHeight;
         renderWidth = renderWidth * ratio;
       }
 
+      // Center perfectly on page
       const xOffset = margin + (printableWidth - renderWidth) / 2;
       const yOffset = margin + (printableHeight - renderHeight) / 2;
 
-      pdf.addImage(imgData, "PNG", xOffset, yOffset, renderWidth, renderHeight);
+      pdf.addImage(imgData, "PNG", xOffset, yOffset, renderWidth, renderHeight, undefined, "FAST");
       pdf.save(`StudyTrack_${data.type.toUpperCase()}_Certificate_${data.certificateId}.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
-      // Seamless browser print fallback
+      // Fallback to browser print dialog
       window.print();
     } finally {
       setIsExporting(false);
@@ -162,7 +174,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
       <div className="no-print flex flex-wrap items-center justify-between gap-3 p-4 bg-white rounded-2xl border border-pink-100 shadow-xs">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-200 text-pink-600 flex items-center justify-center">
-            <Award className="w-5 h-5" />
+            <ShieldCheck className="w-5 h-5 text-pink-600" />
           </div>
           <div>
             <h3 className="text-xs font-bold text-zinc-900">
@@ -213,7 +225,7 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                <span>Download Single-Page PDF</span>
+                <span>Download Official PDF</span>
               </>
             )}
           </button>
@@ -221,285 +233,783 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
       </div>
 
       {/* ============================================================== */}
-      {/* SINGLE PAGE REPORT CARD DOCUMENT (FITS EXACTLY ON ONE A4 PAGE) */}
+      {/* SINGLE PAGE REPORT CARD DOCUMENT (PROPORTIONED FOR 1-PAGE A4) */}
       {/* ============================================================== */}
-      <div
-        ref={printRef}
-        className="certificate-card bg-white p-7 sm:p-9 rounded-3xl border-2 border-pink-200 shadow-xl max-w-4xl mx-auto space-y-4 relative overflow-hidden text-zinc-900"
-        style={{
-          width: "100%",
-          maxWidth: "850px",
-          backgroundColor: "#ffffff",
-          fontFamily: "inherit",
-        }}
-      >
-        {/* Subtle Background Accent */}
-        <div className="absolute right-[-40px] top-[-40px] w-80 h-80 bg-pink-50/40 rounded-full blur-3xl pointer-events-none -z-0" />
-        <div className="absolute left-[-40px] bottom-[-40px] w-80 h-80 bg-pink-50/40 rounded-full blur-3xl pointer-events-none -z-0" />
-
-        {/* 1. TOP HEADER SECTION */}
-        <div className="flex flex-col sm:flex-row items-start justify-between gap-4 pb-4 border-b border-pink-100 relative z-10">
-          {/* Top Left: Logo, Name, Target Preparation & Certificate Title */}
-          <div className="space-y-1.5">
-            {/* Website Name & Logo */}
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-600 to-pink-500 flex items-center justify-center text-white shadow-md shadow-pink-500/25">
-                <GraduationCap className="w-6 h-6" />
-              </div>
-              <div>
-                <span className="text-xl font-black tracking-tight text-zinc-900">
-                  Study<span className="text-pink-600">Track</span>
-                </span>
-                <span className="ml-2 px-2 py-0.5 rounded text-[10px] font-extrabold bg-pink-100 text-pink-700 border border-pink-200">
-                  ACADEMIC RECORD
-                </span>
-              </div>
-            </div>
-
-            {/* Name of the Student */}
-            <div className="pt-1">
-              <h2 className="text-base sm:text-lg font-black text-zinc-900 flex items-center gap-2">
-                <span>{data.student.name}</span>
-                <span className="text-xs font-normal text-zinc-400">({data.student.email})</span>
-              </h2>
-            </div>
-
-            {/* Preparation For Which Exam/Course */}
-            <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-600">
-              <span className="font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-md border border-pink-200">
-                Target: {data.student.course || "SSC CGL / Government Exam & Tech"}
-              </span>
-              <span>&bull;</span>
-              <span className="text-zinc-500">{data.student.college || "University Institute"}</span>
-              <span>&bull;</span>
-              <span className="text-zinc-500">{data.student.academicYear || "Final Year"} ({data.student.semester || "Semester I"})</span>
-            </div>
-
-            {/* Title & Certificate HASH */}
-            <div className="pt-1 space-y-0.5">
-              <p className="text-xs font-bold text-zinc-800">
-                StudyTrack Official Academic Report Card &amp; Certificate
-              </p>
-              <p className="text-[11px] font-mono font-semibold text-pink-700">
-                Certificate HASH: <span className="bg-pink-50 px-2 py-0.5 rounded border border-pink-200">{data.certificateId}</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Top Right: Report Period, Grade Badge & Generated Time */}
-          <div className="flex flex-col items-start sm:items-end text-left sm:text-right space-y-2 shrink-0">
-            <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-pink-50 text-pink-700 border border-pink-200">
-              {data.type} Study Report
-            </span>
-
-            <div className="text-xs">
-              <p className="font-bold text-zinc-900">{data.periodLabel}</p>
-              <p className="text-[10px] text-zinc-400">Generated: {data.generatedAt}</p>
-            </div>
-
-            {/* Grade Stamp */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-pink-50 to-white rounded-xl border border-pink-200">
-              <span className="text-[10px] font-extrabold uppercase text-zinc-400">Grade:</span>
-              <span className="text-lg font-black text-pink-600">{data.performance.grade}</span>
-              <span className="text-[10px] font-bold text-zinc-600">({data.performance.gradeLabel.split(" ")[0]})</span>
-            </div>
-          </div>
-        </div>
-
-        {/* 2. PROPER BOX: PERFORMANCE METRICS ROW */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 relative z-10">
-          {/* Box 1: Study Time Logged */}
-          <div className="p-3.5 rounded-2xl bg-zinc-50/80 border border-zinc-200 flex items-center justify-between shadow-2xs">
-            <div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                Study Time Logged
-              </span>
-              <p className="text-lg font-black text-zinc-900 mt-0.5">
-                {data.performance.totalStudyFormatted}
-              </p>
-              <p className="text-[10px] text-zinc-500 font-medium">
-                Goal: {data.performance.targetGoalFormatted}
-              </p>
-            </div>
-            <div className="w-9 h-9 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
-              <Clock className="w-5 h-5" />
-            </div>
-          </div>
-
-          {/* Box 2: Goal Achievement */}
-          <div className="p-3.5 rounded-2xl bg-zinc-50/80 border border-zinc-200 flex items-center justify-between shadow-2xs">
-            <div className="flex-1 mr-3">
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                Goal Achievement
-              </span>
-              <div className="flex items-baseline gap-1 mt-0.5">
-                <span className="text-lg font-black text-emerald-600">
-                  {data.performance.goalPercentage}%
-                </span>
-                <span className="text-[10px] text-zinc-400 font-semibold">
-                  {data.performance.goalPercentage >= 100 ? "Completed 🎉" : "Progress"}
-                </span>
-              </div>
-              <div className="w-full bg-zinc-200 rounded-full h-1.5 mt-1 overflow-hidden">
-                <div
-                  className="bg-emerald-500 h-1.5 rounded-full transition-all"
-                  style={{ width: `${Math.min(data.performance.goalPercentage, 100)}%` }}
-                />
-              </div>
-            </div>
-            <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-              <Sparkles className="w-5 h-5" />
-            </div>
-          </div>
-
-          {/* Box 3: Sessions & Tasks */}
-          <div className="p-3.5 rounded-2xl bg-zinc-50/80 border border-zinc-200 flex items-center justify-between shadow-2xs">
-            <div>
-              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
-                Sessions &amp; Tasks
-              </span>
-              <p className="text-lg font-black text-zinc-900 mt-0.5">
-                {data.performance.sessionCount} <span className="text-xs font-semibold text-zinc-500">Sessions</span>
-              </p>
-              <p className="text-[10px] text-zinc-500 font-medium">
-                {data.performance.tasksCompletedCount} Tasks Completed
-              </p>
-            </div>
-            <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* 3. PROPER BOX: CURRICULUM & SUBJECT DISTRIBUTION */}
-        <div className="rounded-2xl border border-zinc-200 overflow-hidden shadow-2xs relative z-10 bg-white">
-          <div className="px-4 py-2.5 bg-gradient-to-r from-pink-50/70 via-white to-pink-50/40 border-b border-zinc-200 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-pink-600" />
-              <h3 className="text-xs font-bold text-zinc-900 uppercase tracking-wider">
-                Curriculum &amp; Subject Distribution
-              </h3>
-            </div>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-pink-100 text-pink-700 border border-pink-200">
-              {data.subjectBreakdown.length} Subjects Studied
-            </span>
-          </div>
-
-          <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-50/80 border-b border-zinc-100 text-zinc-500 font-bold text-[10px]">
-              <tr>
-                <th className="py-2 px-4">Subject</th>
-                <th className="py-2 px-3 text-center">Sessions</th>
-                <th className="py-2 px-3 text-center">Topics</th>
-                <th className="py-2 px-4 text-right">Hours Logged</th>
-                <th className="py-2 px-4 text-right">Share (%)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100 text-xs">
-              {data.subjectBreakdown.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-3 px-4 text-center text-zinc-400 text-xs">
-                    No sessions logged for this period yet.
-                  </td>
-                </tr>
-              ) : (
-                data.subjectBreakdown.map((sub, idx) => (
-                  <tr key={idx} className="hover:bg-zinc-50/40">
-                    <td className="py-2.5 px-4 flex items-center gap-2 font-bold text-zinc-900">
-                      <div
-                        className="w-2.5 h-2.5 rounded-md shrink-0 shadow-2xs"
-                        style={{ backgroundColor: sub.color }}
-                      />
-                      <span className="truncate max-w-[260px]">{sub.name}</span>
-                    </td>
-                    <td className="py-2.5 px-3 text-center text-zinc-600 font-medium">
-                      {sub.sessionCount}
-                    </td>
-                    <td className="py-2.5 px-3 text-center text-zinc-600 font-medium">
-                      {sub.uniqueTopicsCount}
-                    </td>
-                    <td className="py-2.5 px-4 text-right font-bold text-zinc-900">
-                      {Math.floor(sub.duration / 60)}h {sub.duration % 60}m
-                    </td>
-                    <td className="py-2.5 px-4 text-right">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-pink-50 text-pink-700 border border-pink-200">
-                        {sub.percentage}%
+      <div className="w-full overflow-x-auto pb-4">
+        <div
+          ref={printRef}
+          id="studytrack-certificate-node"
+          className="certificate-card mx-auto bg-white text-zinc-900 relative"
+          style={{
+            width: "100%",
+            maxWidth: "820px",
+            minWidth: "750px",
+            backgroundColor: "#ffffff",
+            padding: "24px 28px",
+            boxSizing: "border-box",
+            border: "3.5px solid #EC4899",
+            borderRadius: "16px",
+            boxShadow: "0 10px 30px -5px rgba(236, 72, 153, 0.15)",
+          }}
+        >
+          {/* Inner Decorative Diploma Frame */}
+          <div
+            style={{
+              border: "1.5px solid #FBCFE8",
+              borderRadius: "10px",
+              padding: "20px 22px",
+              backgroundColor: "#ffffff",
+              boxSizing: "border-box",
+            }}
+            className="space-y-4"
+          >
+            {/* 1. TOP HEADER SECTION */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: "16px",
+                paddingBottom: "14px",
+                borderBottom: "1.5px solid #FCE7F3",
+              }}
+            >
+              {/* Top Left: Logo, Name & Title */}
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div
+                    style={{
+                      width: "42px",
+                      height: "42px",
+                      borderRadius: "10px",
+                      background: "linear-gradient(135deg, #EC4899 0%, #DB2777 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#ffffff",
+                    }}
+                  >
+                    <GraduationCap style={{ width: "26px", height: "26px" }} />
+                  </div>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span
+                        style={{
+                          fontSize: "22px",
+                          fontWeight: 900,
+                          letterSpacing: "-0.5px",
+                          color: "#18181B",
+                          lineHeight: 1.1,
+                        }}
+                      >
+                        Study<span style={{ color: "#EC4899" }}>Track</span>
                       </span>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                      <span
+                        style={{
+                          fontSize: "9px",
+                          fontWeight: 800,
+                          backgroundColor: "#FDF2F8",
+                          color: "#BE185D",
+                          padding: "2px 8px",
+                          borderRadius: "4px",
+                          border: "1px solid #FBCFE8",
+                          letterSpacing: "0.5px",
+                        }}
+                      >
+                        OFFICIAL ACADEMIC RECORD
+                      </span>
+                    </div>
+                    <p
+                      style={{
+                        fontSize: "11px",
+                        color: "#71717A",
+                        fontWeight: 600,
+                        marginTop: "2px",
+                      }}
+                    >
+                      StudyTrack Official Academic Report Card &amp; Certificate
+                    </p>
+                  </div>
+                </div>
 
-        {/* 4. BOTTOM SECTION: EXACT SEAL & HASH ON BOTTOM LEFT, SIGNATURES ON BOTTOM RIGHT */}
-        <div className="pt-4 border-t-2 border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
-          {/* BOTTOM LEFT: Exactly as requested with Pink Round Seal, Title, Subtitle, and HASH pill */}
-          <div className="flex items-center gap-3.5">
-            {/* Round Pink Seal: STUDYTRACK VERIFIED */}
-            <div className="w-16 h-16 rounded-full border-[3px] border-[#EC4899] bg-white flex flex-col items-center justify-center text-center p-1 shadow-sm shrink-0">
-              <Medal className="w-5 h-5 text-[#EC4899]" />
-              <span className="text-[7px] font-black uppercase text-[#DB2777] tracking-tight leading-tight mt-0.5">
-                STUDYTRACK
-                <br />
-                VERIFIED
-              </span>
-            </div>
+                {/* Candidate Name & Info */}
+                <div style={{ marginTop: "10px" }}>
+                  <h2
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 800,
+                      color: "#18181B",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    <span>{data.student.name}</span>
+                    <span style={{ fontSize: "12px", fontWeight: 400, color: "#71717A" }}>
+                      ({data.student.email})
+                    </span>
+                  </h2>
 
-            {/* Official StudyTrack Record & HASH */}
-            <div className="space-y-1">
-              <h4 className="text-sm font-extrabold text-zinc-900 leading-tight">
-                Official StudyTrack Record
-              </h4>
-              <p className="text-[11px] text-zinc-500 font-normal">
-                Digitally authenticated study session ledger
-              </p>
-              {/* Pink Pill with HASH */}
-              <div className="inline-block px-3 py-0.5 rounded-full bg-[#FFF1F7] border border-[#FBCFE8] font-mono text-xs font-bold text-[#BE185D]">
-                HASH: {data.certificateId}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      alignItems: "center",
+                      gap: "8px",
+                      marginTop: "4px",
+                      fontSize: "11px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontWeight: 700,
+                        color: "#DB2777",
+                        backgroundColor: "#FFF1F7",
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        border: "1px solid #FBCFE8",
+                      }}
+                    >
+                      Target: {data.student.course || "SSC CGL / Govt Exam & Tech Aspirant"}
+                    </span>
+                    <span style={{ color: "#D1D5DB" }}>•</span>
+                    <span style={{ color: "#4B5563", fontWeight: 500 }}>
+                      {data.student.college || "Delhi University / National Institute"}
+                    </span>
+                    <span style={{ color: "#D1D5DB" }}>•</span>
+                    <span style={{ color: "#4B5563", fontWeight: 500 }}>
+                      {data.student.academicYear || "Final Year"} ({data.student.semester || "6th Semester"})
+                    </span>
+                  </div>
+
+                  {/* Certificate HASH */}
+                  <div style={{ marginTop: "6px" }}>
+                    <span
+                      style={{
+                        fontFamily: "monospace",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        color: "#BE185D",
+                        backgroundColor: "#FFF1F7",
+                        padding: "3px 10px",
+                        borderRadius: "6px",
+                        border: "1px solid #FBCFE8",
+                        display: "inline-block",
+                      }}
+                    >
+                      Certificate HASH: {data.certificateId}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Right: Report Period, Grade Badge & Generated Time */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-end",
+                  textAlign: "right",
+                  gap: "6px",
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    padding: "3px 12px",
+                    borderRadius: "9999px",
+                    fontSize: "10px",
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    backgroundColor: "#FFF1F7",
+                    color: "#DB2777",
+                    border: "1px solid #FBCFE8",
+                  }}
+                >
+                  {data.type} Study Report
+                </span>
+
+                <div style={{ fontSize: "11px" }}>
+                  <p style={{ fontWeight: 800, color: "#18181B" }}>{data.periodLabel}</p>
+                  <p style={{ fontSize: "10px", color: "#71717A", marginTop: "1px" }}>
+                    Generated: {data.generatedAt}
+                  </p>
+                </div>
+
+                {/* Grade Stamp Box */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "6px 12px",
+                    backgroundColor: "#FFF1F7",
+                    borderRadius: "8px",
+                    border: "1.5px solid #F472B6",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                      color: "#71717A",
+                    }}
+                  >
+                    Grade:
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 900,
+                      color: "#DB2777",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {data.performance.grade}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      color: "#4B5563",
+                    }}
+                  >
+                    ({data.performance.gradeLabel.split(" ")[0]})
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* BOTTOM RIGHT: Dual Digital Signatures */}
-          <div className="flex items-center gap-6 text-center">
-            {/* Student Digital Signature */}
-            <div className="space-y-0.5">
-              <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-3 min-w-[110px]">
-                <span className="font-serif italic text-xs font-semibold text-zinc-800">
-                  {data.student.name}
+            {/* 2. PROPER BOX: PERFORMANCE METRICS ROW (3 COLUMNS) */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "12px",
+              }}
+            >
+              {/* Box 1: Study Time Logged */}
+              <div
+                style={{
+                  padding: "12px 14px",
+                  borderRadius: "10px",
+                  backgroundColor: "#F9FAFB",
+                  border: "1px solid #E5E7EB",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <span
+                    style={{
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      color: "#6B7280",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      display: "block",
+                    }}
+                  >
+                    Study Time Logged
+                  </span>
+                  <p
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 900,
+                      color: "#111827",
+                      marginTop: "2px",
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    {data.performance.totalStudyFormatted}
+                  </p>
+                  <p style={{ fontSize: "10px", color: "#6B7280", marginTop: "2px", fontWeight: 500 }}>
+                    Target Goal: {data.performance.targetGoalFormatted}
+                  </p>
+                </div>
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "8px",
+                    backgroundColor: "#FDF2F8",
+                    color: "#EC4899",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid #FCE7F3",
+                  }}
+                >
+                  <Clock style={{ width: "18px", height: "18px" }} />
+                </div>
+              </div>
+
+              {/* Box 2: Goal Achievement */}
+              <div
+                style={{
+                  padding: "12px 14px",
+                  borderRadius: "10px",
+                  backgroundColor: "#F9FAFB",
+                  border: "1px solid #E5E7EB",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ flex: 1, marginRight: "10px" }}>
+                  <span
+                    style={{
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      color: "#6B7280",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      display: "block",
+                    }}
+                  >
+                    Goal Achievement
+                  </span>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: "6px", marginTop: "2px" }}>
+                    <span style={{ fontSize: "18px", fontWeight: 900, color: "#059669", lineHeight: 1.1 }}>
+                      {data.performance.goalPercentage}%
+                    </span>
+                    <span style={{ fontSize: "10px", color: "#6B7280", fontWeight: 600 }}>
+                      {data.performance.goalPercentage >= 100 ? "Completed 🎉" : "Progress"}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      backgroundColor: "#E5E7EB",
+                      borderRadius: "9999px",
+                      height: "6px",
+                      marginTop: "5px",
+                      overflow: "hidden",
+                    }}
+                  >
+                    <div
+                      style={{
+                        backgroundColor: "#10B981",
+                        height: "6px",
+                        borderRadius: "9999px",
+                        width: `${Math.min(data.performance.goalPercentage, 100)}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "8px",
+                    backgroundColor: "#ECFDF5",
+                    color: "#059669",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid #D1FAE5",
+                  }}
+                >
+                  <Sparkles style={{ width: "18px", height: "18px" }} />
+                </div>
+              </div>
+
+              {/* Box 3: Sessions & Tasks */}
+              <div
+                style={{
+                  padding: "12px 14px",
+                  borderRadius: "10px",
+                  backgroundColor: "#F9FAFB",
+                  border: "1px solid #E5E7EB",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <span
+                    style={{
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      color: "#6B7280",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      display: "block",
+                    }}
+                  >
+                    Sessions &amp; Tasks
+                  </span>
+                  <p
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 900,
+                      color: "#111827",
+                      marginTop: "2px",
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    {data.performance.sessionCount}{" "}
+                    <span style={{ fontSize: "11px", fontWeight: 600, color: "#6B7280" }}>Sessions</span>
+                  </p>
+                  <p style={{ fontSize: "10px", color: "#6B7280", marginTop: "2px", fontWeight: 500 }}>
+                    {data.performance.tasksCompletedCount} Tasks Completed
+                  </p>
+                </div>
+                <div
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "8px",
+                    backgroundColor: "#EFF6FF",
+                    color: "#2563EB",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid #DBEAFE",
+                  }}
+                >
+                  <CheckCircle2 style={{ width: "18px", height: "18px" }} />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. PROPER BOX: CURRICULUM & SUBJECT DISTRIBUTION */}
+            <div
+              style={{
+                borderRadius: "10px",
+                border: "1.5px solid #FCE7F3",
+                overflow: "hidden",
+                backgroundColor: "#ffffff",
+              }}
+            >
+              <div
+                style={{
+                  padding: "10px 16px",
+                  backgroundColor: "#FFF1F7",
+                  borderBottom: "1.5px solid #FCE7F3",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Layers style={{ width: "16px", height: "16px", color: "#DB2777" }} />
+                  <h3
+                    style={{
+                      fontSize: "11px",
+                      fontWeight: 800,
+                      color: "#18181B",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    Curriculum &amp; Subject Distribution
+                  </h3>
+                </div>
+                <span
+                  style={{
+                    padding: "2px 10px",
+                    borderRadius: "9999px",
+                    fontSize: "10px",
+                    fontWeight: 800,
+                    backgroundColor: "#ffffff",
+                    color: "#DB2777",
+                    border: "1px solid #FBCFE8",
+                  }}
+                >
+                  {data.subjectBreakdown.length} Subjects Studied
                 </span>
               </div>
-              <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider block">
-                Student Signature
-              </span>
+
+              <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse", fontSize: "11px" }}>
+                <thead>
+                  <tr
+                    style={{
+                      backgroundColor: "#F9FAFB",
+                      borderBottom: "1px solid #E5E7EB",
+                      color: "#4B5563",
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    <th style={{ padding: "8px 14px" }}>Subject</th>
+                    <th style={{ padding: "8px 10px", textAlign: "center" }}>Sessions</th>
+                    <th style={{ padding: "8px 10px", textAlign: "center" }}>Topics</th>
+                    <th style={{ padding: "8px 14px", textAlign: "right" }}>Hours Logged</th>
+                    <th style={{ padding: "8px 14px", textAlign: "right" }}>Share (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.subjectBreakdown.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        style={{ padding: "14px", textAlign: "center", color: "#9CA3AF", fontSize: "11px" }}
+                      >
+                        No sessions logged for this period yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    data.subjectBreakdown.map((sub, idx) => (
+                      <tr
+                        key={idx}
+                        style={{
+                          borderBottom: idx < data.subjectBreakdown.length - 1 ? "1px solid #F3F4F6" : "none",
+                          backgroundColor: idx % 2 === 0 ? "#ffffff" : "#FAFAFA",
+                        }}
+                      >
+                        <td
+                          style={{
+                            padding: "9px 14px",
+                            fontWeight: 700,
+                            color: "#18181B",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: "10px",
+                              height: "10px",
+                              borderRadius: "3px",
+                              backgroundColor: sub.color || "#EC4899",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                            {sub.name}
+                          </span>
+                        </td>
+                        <td style={{ padding: "9px 10px", textAlign: "center", color: "#4B5563", fontWeight: 600 }}>
+                          {sub.sessionCount}
+                        </td>
+                        <td style={{ padding: "9px 10px", textAlign: "center", color: "#4B5563", fontWeight: 600 }}>
+                          {sub.uniqueTopicsCount}
+                        </td>
+                        <td
+                          style={{
+                            padding: "9px 14px",
+                            textAlign: "right",
+                            fontWeight: 800,
+                            color: "#111827",
+                          }}
+                        >
+                          {Math.floor(sub.duration / 60)}h {sub.duration % 60}m
+                        </td>
+                        <td style={{ padding: "9px 14px", textAlign: "right" }}>
+                          <span
+                            style={{
+                              padding: "2px 8px",
+                              borderRadius: "4px",
+                              fontSize: "10px",
+                              fontWeight: 800,
+                              backgroundColor: "#FFF1F7",
+                              color: "#DB2777",
+                              border: "1px solid #FBCFE8",
+                            }}
+                          >
+                            {sub.percentage}%
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
 
-            {/* CEO Digital Signature with Embedded Base64 Image */}
-            <div className="space-y-0.5">
-              <div className="h-8 border-b border-zinc-400 flex items-end justify-center px-2 min-w-[120px]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={CEO_SIGNATURE_BASE64}
-                  alt="CEO Signature - Chandan Ghanghav"
-                  className="h-7 w-auto max-w-[120px] object-contain"
-                />
+            {/* 4. BOTTOM SECTION: EXACT SEAL & HASH ON BOTTOM LEFT, SIGNATURES ON BOTTOM RIGHT */}
+            <div
+              style={{
+                paddingTop: "14px",
+                borderTop: "1.5px solid #FCE7F3",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "16px",
+              }}
+            >
+              {/* BOTTOM LEFT: Exactly as requested with Pink Round Seal, Title, Subtitle, and HASH pill */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                {/* Round Pink Seal: STUDYTRACK VERIFIED */}
+                <div
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "50%",
+                    border: "3px solid #EC4899",
+                    backgroundColor: "#ffffff",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    padding: "2px",
+                    flexShrink: 0,
+                    boxShadow: "0 2px 8px rgba(236, 72, 153, 0.15)",
+                  }}
+                >
+                  <Medal style={{ width: "18px", height: "18px", color: "#EC4899" }} />
+                  <span
+                    style={{
+                      fontSize: "6.5px",
+                      fontWeight: 900,
+                      textTransform: "uppercase",
+                      color: "#DB2777",
+                      letterSpacing: "-0.2px",
+                      lineHeight: 1.1,
+                      marginTop: "1px",
+                    }}
+                  >
+                    STUDYTRACK
+                    <br />
+                    VERIFIED
+                  </span>
+                </div>
+
+                {/* Official StudyTrack Record & HASH */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                  <h4
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: 800,
+                      color: "#18181B",
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    Official StudyTrack Record
+                  </h4>
+                  <p style={{ fontSize: "10px", color: "#6B7280", fontWeight: 400 }}>
+                    Digitally authenticated study session ledger
+                  </p>
+                  {/* Pink Pill with HASH */}
+                  <div
+                    style={{
+                      marginTop: "2px",
+                      display: "inline-block",
+                      padding: "2px 10px",
+                      borderRadius: "9999px",
+                      backgroundColor: "#FFF1F7",
+                      border: "1px solid #FBCFE8",
+                      fontFamily: "monospace",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      color: "#BE185D",
+                      width: "fit-content",
+                    }}
+                  >
+                    HASH: {data.certificateId}
+                  </div>
+                </div>
               </div>
-              <span className="text-[9px] font-bold text-zinc-500 uppercase tracking-wider block">
-                CEO, StudyTrack
+
+              {/* BOTTOM RIGHT: Dual Digital Signatures */}
+              <div style={{ display: "flex", alignItems: "flex-end", gap: "20px", textAlign: "center" }}>
+                {/* Student Digital Signature */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div
+                    style={{
+                      height: "36px",
+                      borderBottom: "1.5px solid #9CA3AF",
+                      display: "flex",
+                      alignItems: "flex-end",
+                      justifyContent: "center",
+                      padding: "0 10px",
+                      minWidth: "120px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "Georgia, serif",
+                        fontStyle: "italic",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        color: "#1F2937",
+                      }}
+                    >
+                      {data.student.name}
+                    </span>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      color: "#6B7280",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      marginTop: "3px",
+                      display: "block",
+                    }}
+                  >
+                    Student Signature
+                  </span>
+                </div>
+
+                {/* CEO Digital Signature with Embedded Base64 Image */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <div
+                    style={{
+                      height: "36px",
+                      borderBottom: "1.5px solid #9CA3AF",
+                      display: "flex",
+                      alignItems: "flex-end",
+                      justifyContent: "center",
+                      padding: "0 6px",
+                      minWidth: "130px",
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={CEO_SIGNATURE_BASE64}
+                      alt="CEO Signature - Chandan Ghanghav"
+                      style={{ height: "30px", width: "auto", maxWidth: "130px", objectFit: "contain" }}
+                    />
+                  </div>
+                  <span
+                    style={{
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      color: "#374151",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      marginTop: "3px",
+                      display: "block",
+                    }}
+                  >
+                    CEO, StudyTrack
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Bottom Micro-Footer */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "8px",
+                fontSize: "9px",
+                color: "#9CA3AF",
+                paddingTop: "8px",
+                borderTop: "1px solid #F3F4F6",
+              }}
+            >
+              <span>StudyTrack Verified Academic Productivity Ledger</span>
+              <span style={{ fontFamily: "monospace", color: "#DB2777", fontWeight: 700 }}>
+                Verify online: /verify?id={data.certificateId}
               </span>
+              <span>Certified Single-Page A4 Transcript</span>
             </div>
           </div>
-        </div>
-
-        {/* Bottom Micro-Footer */}
-        <div className="text-center text-[9px] text-zinc-400 pt-1.5 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-2">
-          <span>StudyTrack Verified Academic Productivity Ledger</span>
-          <span className="font-mono text-pink-600 font-bold">
-            Verify online at: /verify?id={data.certificateId}
-          </span>
-          <span>Certified Single-Page A4 Transcript</span>
         </div>
       </div>
     </div>

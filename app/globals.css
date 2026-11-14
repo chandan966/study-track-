@@ -86,12 +86,13 @@ body {
 
   /* Certificate element formatting for exact 1-page A4 print */
   .certificate-card {
-    border: 2px solid #ec4899 !important;
+    border: 3px solid #ec4899 !important;
     box-shadow: none !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     max-width: 100% !important;
+    width: 100% !important;
     margin: 0 auto !important;
-    padding: 24px !important;
+    padding: 16px !important;
   }
 }
