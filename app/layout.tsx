@@ -32,6 +32,12 @@ export const metadata: Metadata = {
   authors: [{ name: "Chandan Ghanghav" }, { name: "StudyTrack Team" }],
   creator: "Chandan Ghanghav",
   publisher: "StudyTrack Platform",
+  alternates: {
+    canonical: "https://study-track-drab.vercel.app",
+  },
+  verification: {
+    google: "QzIzD4D1JoybATFVyO_goOP9uqYvKN7SO6EkKgTNu14",
+  },
   robots: {
     index: true,
     follow: true,
@@ -96,6 +102,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Search Console Verification Meta Tag */}
+        <meta name="google-site-verification" content="QzIzD4D1JoybATFVyO_goOP9uqYvKN7SO6EkKgTNu14" />
+
         {/* Google AdSense Account Verification Meta Tag */}
         <meta name="google-adsense-account" content={adsenseClientId} />
 

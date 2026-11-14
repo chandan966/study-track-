@@ -1,15 +1,20 @@
 import React from "react";
 import Link from "next/link";
 import { GraduationCap, ArrowLeft, Award, Sparkles, ShieldCheck, Heart } from "lucide-react";
+import { PublicFooter } from "@/components/navigation/PublicFooter";
 
 export const metadata = {
-  title: "About Us — StudyTrack",
-  description: "Learn about the mission, architecture, and creators behind the StudyTrack educational productivity platform.",
+  title: "About Us — StudyTrack Educational Platform",
+  description:
+    "Learn about the mission, architecture, and creators behind the StudyTrack educational productivity platform for competitive exam aspirants.",
+  alternates: {
+    canonical: "https://study-track-drab.vercel.app/about",
+  },
 };
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-study-bg text-zinc-900 flex flex-col">
+    <div className="min-h-screen bg-study-bg text-zinc-900 flex flex-col selection:bg-pink-200">
       {/* Header */}
       <header className="bg-white border-b border-pink-100 py-4 px-6 sticky top-0 z-30">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
@@ -52,7 +57,7 @@ export default function AboutPage() {
               <strong>StudyTrack</strong> was founded by <strong>Chandan Ghanghav</strong> with a singular vision: to give ambitious students a rigorous, trustworthy, and distraction-free academic environment.
             </p>
             <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed">
-              Unlike generic productivity apps, StudyTrack is built specifically for high-stakes exam preparation—such as SSC CGL, UPSC, Engineering, Medical, and University degrees. Every study session logged on StudyTrack is cryptographically recorded, allowing learners to export verified, single-page A4 report cards that mentors and parents can authenticate in real-time.
+              Unlike generic productivity apps, StudyTrack is built specifically for high-stakes exam preparation—such as SSC CGL, UPSC, Engineering, Medical, and University degrees. Every study session logged on StudyTrack is recorded with subject breakdown, topic mastery, and automated spaced-repetition schedules. Students can export verified, single-page A4 report cards that mentors and parents can authenticate in real-time.
             </p>
           </section>
 
@@ -108,6 +113,8 @@ export default function AboutPage() {
           </section>
         </div>
       </main>
+
+      <PublicFooter />
     </div>
   );
 }

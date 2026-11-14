@@ -1,11 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import { GraduationCap, ArrowLeft, FileText, CheckCircle2, ShieldCheck } from "lucide-react";
+import { PublicFooter } from "@/components/navigation/PublicFooter";
 
 export const metadata = {
   title: "Terms of Service — StudyTrack",
   description:
     "Terms and conditions governing the use of StudyTrack educational productivity platform, student accounts, and certificate verification.",
+  alternates: {
+    canonical: "https://study-track-drab.vercel.app/terms",
+  },
 };
 
 export default function TermsOfServicePage() {
@@ -100,6 +104,8 @@ export default function TermsOfServicePage() {
           </section>
         </div>
       </main>
+
+      <PublicFooter />
     </div>
   );
 }

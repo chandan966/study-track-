@@ -426,6 +426,21 @@ export default function ForgotPasswordPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Legal & Policy Navigation */}
+        <div className="mt-8 text-center text-[11px] text-zinc-400 space-x-3">
+          <Link href="/" className="hover:text-pink-600 transition-colors">Home</Link>
+          <span>•</span>
+          <Link href="/about" className="hover:text-pink-600 transition-colors">About</Link>
+          <span>•</span>
+          <Link href="/privacy" className="hover:text-pink-600 transition-colors">Privacy</Link>
+          <span>•</span>
+          <Link href="/terms" className="hover:text-pink-600 transition-colors">Terms</Link>
+          <span>•</span>
+          <Link href="/disclaimer" className="hover:text-pink-600 transition-colors">Disclaimer</Link>
+          <span>•</span>
+          <Link href="/contact" className="hover:text-pink-600 transition-colors">Contact</Link>
+        </div>
       </div>
     </div>
   );

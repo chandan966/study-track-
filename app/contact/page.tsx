@@ -5,6 +5,7 @@ import Link from "next/link";
 import { GraduationCap, ArrowLeft, Mail, MapPin, Send, CheckCircle2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PublicFooter } from "@/components/navigation/PublicFooter";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -171,6 +172,8 @@ export default function ContactPage() {
           </div>
         </div>
       </main>
+
+      <PublicFooter />
     </div>
   );
 }

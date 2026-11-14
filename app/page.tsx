@@ -15,8 +15,10 @@ import {
   RotateCcw,
   Trophy,
   ShieldCheck,
+  HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PublicFooter } from "@/components/navigation/PublicFooter";
 
 export default function LandingPage() {
   return (
@@ -308,7 +310,130 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 7. CTA SECTION */}
+      {/* 7. FREQUENTLY ASKED QUESTIONS (FAQ) SECTION */}
+      <section id="faq" className="py-20 bg-study-bg border-t border-pink-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-12">
+          <div className="text-center space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-xs font-bold border border-pink-200">
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Everything You Need to Know</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-zinc-900 tracking-tight">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-500 max-w-xl mx-auto">
+              Learn how StudyTrack empowers students, parents, and mentors with authenticated study logging and spaced repetition.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "What is StudyTrack and who is it designed for?",
+                a: "StudyTrack is an educational productivity and progress-tracking platform engineered for students preparing for competitive exams (such as SSC CGL, UPSC, Engineering, Medical) as well as university semester curriculums. It provides Pomodoro deep-work timers, subject-by-subject topic tracking, spaced-repetition revision cycles, and certified single-page academic reports.",
+              },
+              {
+                q: "How does the unique 12-Digit Student Identification Number work?",
+                a: "Upon free registration, each student is assigned an official 12-digit Student ID (e.g. 202611622828). This number serves as a permanent academic identifier on our educational ledger. Students can log in or recover forgotten passwords using either their 12-digit Student ID or their registered email address, backed by anti-bot Captcha protection.",
+              },
+              {
+                q: "How can parents and mentors verify student certificates and study records?",
+                a: "Every exported daily, weekly, or monthly report card carries a unique cryptographic ledger hash (e.g., ST-REC-20261114-CHAN-XXXX). Mentors and parents can visit the public /verify portal and enter this hash to authenticate exact study hours, subject distribution, and completed goals directly from our database.",
+              },
+              {
+                q: "How does Spaced Repetition boost my exam preparation retention?",
+                a: "StudyTrack uses automated spaced-repetition intervals (Day 1, Day 3, Day 7, Day 14, and Day 30) based on the cognitive Ebbinghaus forgetting curve. When you mark a topic as completed, StudyTrack automatically schedules timely review notifications so critical concepts remain active in your long-term memory.",
+              },
+              {
+                q: "Is StudyTrack free to use?",
+                a: "Yes. StudyTrack is 100% free for students to track daily study sessions, maintain streaks, manage revision schedules, and download certified A4 report cards. Our operations are supported by non-intrusive Google AdSense advertising.",
+              },
+              {
+                q: "How is my personal information and study data protected?",
+                a: "StudyTrack enforces TLS 1.3 HTTPS encryption for all web traffic, salts and hashes passwords using bcrypt (12 rounds), and secures database connections over SSL. We strictly comply with GDPR and CCPA standards and never sell or rent student personal data.",
+              },
+            ].map((faq, i) => (
+              <div
+                key={i}
+                className="bg-white p-6 rounded-2xl border border-pink-100 shadow-xs space-y-2 hover:border-pink-200 transition-colors"
+              >
+                <h3 className="text-sm sm:text-base font-bold text-zinc-900 flex items-start gap-2.5">
+                  <span className="text-pink-600 font-extrabold text-sm sm:text-base shrink-0">
+                    Q{i + 1}.
+                  </span>
+                  <span>{faq.q}</span>
+                </h3>
+                <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed pl-6">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Structured Data: FAQPage JSON-LD for Google Rich Results */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: "What is StudyTrack and who is it designed for?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "StudyTrack is an educational productivity and progress-tracking platform engineered for students preparing for competitive exams (such as SSC CGL, UPSC, Engineering, Medical) as well as university semester curriculums.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How does the unique 12-Digit Student Identification Number work?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Upon free registration, each student is assigned an official 12-digit Student ID that serves as a permanent academic identifier for dual login and secure account recovery.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How can parents and mentors verify student certificates?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Every exported report card carries a unique cryptographic ledger hash. Mentors and parents can visit the public /verify portal and enter this hash to authenticate exact study hours and subject distribution.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How does Spaced Repetition boost exam retention?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "StudyTrack uses automated spaced-repetition intervals (Day 1, Day 3, Day 7, Day 14, and Day 30) to prevent the forgetting curve and keep concepts active in long-term memory.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "Is StudyTrack free to use?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "Yes, StudyTrack is 100% free for students to track daily study sessions, maintain streaks, manage revision schedules, and download certified A4 report cards.",
+                  },
+                },
+                {
+                  "@type": "Question",
+                  name: "How is my personal information protected?",
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: "StudyTrack enforces TLS 1.3 HTTPS encryption, bcrypt 12-round hashing, and complies with GDPR and CCPA privacy standards.",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
+      </section>
+
+      {/* 8. CTA SECTION */}
       <section className="py-20 bg-gradient-to-tr from-brand-600 via-pink-600 to-brand-500 text-white text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
@@ -327,65 +452,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 8. FOOTER */}
-      <footer className="bg-white border-t border-pink-100 py-10 text-xs text-zinc-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-md bg-brand-500 flex items-center justify-center text-white">
-                <GraduationCap className="w-4 h-4" />
-              </div>
-              <span className="font-bold text-zinc-900">StudyTrack</span>
-              <span className="text-zinc-400">© 2026. All rights reserved.</span>
-            </div>
-
-            <p>
-              <a
-                href="https://www.instagram.com/trigger_toofan"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="webdevchandna Instagram (opens in new tab)"
-                className="font-semibold text-pink-600 hover:text-pink-700 hover:underline transition-colors"
-              >
-                webdevchandna
-              </a>
-            </p>
-
-            <div className="flex items-center gap-4 sm:gap-6">
-              <Link href="/verify" className="font-bold text-pink-600 hover:text-pink-700">
-                Verify Certificate
-              </Link>
-              <Link href="/login" className="hover:text-brand-600">
-                Sign In
-              </Link>
-              <Link href="/register" className="hover:text-brand-600">
-                Create Account
-              </Link>
-            </div>
-          </div>
-
-          {/* AdSense & Legal Compliance Navigation */}
-          <div className="pt-4 border-t border-pink-50 flex flex-wrap items-center justify-between gap-3 text-[11px] text-zinc-400">
-            <div className="flex flex-wrap items-center gap-4">
-              <Link href="/about" className="hover:text-pink-600 transition-colors">
-                About Us
-              </Link>
-              <Link href="/contact" className="hover:text-pink-600 transition-colors">
-                Contact &amp; Support
-              </Link>
-              <Link href="/privacy" className="hover:text-pink-600 transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="hover:text-pink-600 transition-colors">
-                Terms of Service
-              </Link>
-            </div>
-            <p>
-              Security Verified &bull; Cryptographically Authenticated Educational Records
-            </p>
-          </div>
-        </div>
-      </footer>
+      {/* 9. GLOBAL PUBLIC FOOTER */}
+      <PublicFooter />
     </div>
   );
 }

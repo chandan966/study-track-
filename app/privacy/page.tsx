@@ -1,11 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import { ShieldCheck, GraduationCap, ArrowLeft, Lock, CheckCircle2 } from "lucide-react";
+import { PublicFooter } from "@/components/navigation/PublicFooter";
 
 export const metadata = {
   title: "Privacy Policy — StudyTrack",
   description:
     "Learn how StudyTrack collects, protects, and handles student study data and privacy, including full Google AdSense, GDPR, CCPA, and COPPA compliance.",
+  alternates: {
+    canonical: "https://study-track-drab.vercel.app/privacy",
+  },
 };
 
 export default function PrivacyPolicyPage() {
@@ -234,6 +238,8 @@ export default function PrivacyPolicyPage() {
           </section>
         </div>
       </main>
+
+      <PublicFooter />
     </div>
   );
 }
