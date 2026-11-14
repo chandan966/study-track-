@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations";
+import { generateUniqueStudentId } from "@/lib/studentId";
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +11,7 @@ export async function POST(req: Request) {
 
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error.errors[0]?.message || "Invalid input" },
+        { error: result.error.errors[0]?.message || "Invalid input data" },
         { status: 400 }
       );
     }
@@ -25,19 +26,23 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "An account with this email already exists" },
+        { error: "An account with this email address already exists" },
         { status: 400 }
       );
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Generate unique 12-digit student ID
+    const studentId = await generateUniqueStudentId();
 
-    // Create user
+    // Hash password with 12 salt rounds for enhanced security
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create user in database
     const user = await prisma.user.create({
       data: {
         name: name.trim(),
         email: normalizedEmail,
+        studentId,
         password: hashedPassword,
         dailyGoalMinutes: 360, // 6 hours default
       },
@@ -45,15 +50,20 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        message: "Registration successful! You can now log in.",
-        user: { id: user.id, name: user.name, email: user.email },
+        message: "Registration successful! Your 12-digit student account has been created.",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          studentId: user.studentId,
+        },
       },
       { status: 201 }
     );
   } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred during registration" },
+      { error: "An unexpected error occurred during registration. Please try again." },
       { status: 500 }
     );
   }

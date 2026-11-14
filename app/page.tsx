@@ -329,37 +329,60 @@ export default function LandingPage() {
 
       {/* 8. FOOTER */}
       <footer className="bg-white border-t border-pink-100 py-10 text-xs text-zinc-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-brand-500 flex items-center justify-center text-white">
-              <GraduationCap className="w-4 h-4" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-brand-500 flex items-center justify-center text-white">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <span className="font-bold text-zinc-900">StudyTrack</span>
+              <span className="text-zinc-400">© 2026. All rights reserved.</span>
             </div>
-            <span className="font-bold text-zinc-900">StudyTrack</span>
-            <span className="text-zinc-400">© 2026. All rights reserved.</span>
+
+            <p>
+              <a
+                href="https://www.instagram.com/trigger_toofan"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="webdevchandna Instagram (opens in new tab)"
+                className="font-semibold text-pink-600 hover:text-pink-700 hover:underline transition-colors"
+              >
+                webdevchandna
+              </a>
+            </p>
+
+            <div className="flex items-center gap-4 sm:gap-6">
+              <Link href="/verify" className="font-bold text-pink-600 hover:text-pink-700">
+                Verify Certificate
+              </Link>
+              <Link href="/login" className="hover:text-brand-600">
+                Sign In
+              </Link>
+              <Link href="/register" className="hover:text-brand-600">
+                Create Account
+              </Link>
+            </div>
           </div>
 
-          <p>
-            <a
-              href="https://www.instagram.com/trigger_toofan"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="webdevchandna Instagram (opens in new tab)"
-              className="font-semibold text-pink-600 hover:text-pink-700 hover:underline transition-colors"
-            >
-              webdevchandna
-            </a>
-          </p>
-
-          <div className="flex items-center gap-6">
-            <Link href="/verify" className="font-bold text-pink-600 hover:text-pink-700">
-              Verify Certificate
-            </Link>
-            <Link href="/login" className="hover:text-brand-600">
-              Sign In
-            </Link>
-            <Link href="/register" className="hover:text-brand-600">
-              Create Account
-            </Link>
+          {/* AdSense & Legal Compliance Navigation */}
+          <div className="pt-4 border-t border-pink-50 flex flex-wrap items-center justify-between gap-3 text-[11px] text-zinc-400">
+            <div className="flex flex-wrap items-center gap-4">
+              <Link href="/about" className="hover:text-pink-600 transition-colors">
+                About Us
+              </Link>
+              <Link href="/contact" className="hover:text-pink-600 transition-colors">
+                Contact &amp; Support
+              </Link>
+              <Link href="/privacy" className="hover:text-pink-600 transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms" className="hover:text-pink-600 transition-colors">
+                Terms of Service
+              </Link>
+            </div>
+            <p>
+              Security Verified &bull; Cryptographically Authenticated Educational Records
+            </p>
           </div>
         </div>
       </footer>

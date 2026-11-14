@@ -18,6 +18,7 @@ export async function GET() {
         id: true,
         name: true,
         email: true,
+        studentId: true,
         image: true,
         college: true,
         course: true,

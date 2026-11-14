@@ -252,10 +252,13 @@ function VerifyContent() {
             </a>
           </p>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-3">
             <Link href="/" className="hover:text-pink-600 font-medium">Home</Link>
+            <Link href="/about" className="hover:text-pink-600 font-medium">About</Link>
+            <Link href="/contact" className="hover:text-pink-600 font-medium">Contact</Link>
+            <Link href="/privacy" className="hover:text-pink-600 font-medium">Privacy</Link>
+            <Link href="/terms" className="hover:text-pink-600 font-medium">Terms</Link>
             <Link href="/login" className="hover:text-pink-600 font-medium">Sign In</Link>
-            <Link href="/dashboard" className="hover:text-pink-600 font-medium">Dashboard</Link>
           </div>
         </div>
       </footer>

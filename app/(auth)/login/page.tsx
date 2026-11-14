@@ -4,26 +4,37 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { GraduationCap, ArrowRight, Lock, Mail } from "lucide-react";
+import { GraduationCap, ArrowRight, Lock, UserCheck, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { CaptchaWidget } from "@/components/auth/CaptchaWidget";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError(null);
+    setCaptchaError(null);
+
+    // Enforce captcha verification
+    if (!isCaptchaVerified) {
+      setCaptchaError("Please complete the security verification challenge before logging in.");
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       const res = await signIn("credentials", {
-        email,
+        email: identifier.trim(),
         password,
         redirect: false,
       });
@@ -56,7 +67,7 @@ export default function LoginPage() {
           Welcome back, Scholar!
         </h2>
         <p className="text-xs text-zinc-500">
-          Enter your email and password to access your study dashboard.
+          Enter your Email Address or 12-Digit Student ID to access your dashboard.
         </p>
       </div>
 
@@ -70,23 +81,28 @@ export default function LoginPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Email or 12-Digit Student ID */}
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                  Email Address
+                  Email Address or 12-Digit Student ID
                 </label>
                 <div className="relative">
                   <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="student@example.com"
+                    type="text"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    placeholder="student@example.com or 202611140001"
                     required
-                    className="pl-9"
+                    className="pl-9 text-xs sm:text-sm"
                   />
-                  <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
+                  <UserCheck className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                 </div>
+                <p className="text-[10px] text-zinc-400 mt-1">
+                  You can sign in with your registered email or official 12-digit student ID.
+                </p>
               </div>
 
+              {/* Password */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-semibold text-zinc-700">
@@ -111,6 +127,12 @@ export default function LoginPage() {
                   <Lock className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                 </div>
               </div>
+
+              {/* Anti-Bot Captcha Security Challenge */}
+              <CaptchaWidget
+                onVerifyChange={setIsCaptchaVerified}
+                error={captchaError}
+              />
 
               <Button
                 type="submit"

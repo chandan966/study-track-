@@ -13,7 +13,7 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.string().min(3, "Please enter your Email or 12-digit Student ID"),
   password: z.string().min(1, "Password is required"),
 });
 

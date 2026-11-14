@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 export default function ProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [studentId, setStudentId] = useState("");
+  const [copiedId, setCopiedId] = useState(false);
   const [college, setCollege] = useState("");
   const [course, setCourse] = useState("");
   const [branch, setBranch] = useState("");
@@ -29,6 +31,7 @@ export default function ProfilePage() {
         const data = await res.json();
         setName(data.name || "");
         setEmail(data.email || "");
+        setStudentId(data.studentId || "");
         setCollege(data.college || "");
         setCourse(data.course || "");
         setBranch(data.branch || "");
@@ -119,6 +122,42 @@ export default function ProfilePage() {
                 {error}
               </div>
             )}
+
+            {/* Official 12-Digit Student ID Badge */}
+            <div className="p-4 rounded-xl bg-gradient-to-r from-pink-50 via-white to-pink-50 border border-pink-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase text-pink-700 bg-pink-100 px-2 py-0.5 rounded border border-pink-200">
+                  OFFICIAL 12-DIGIT STUDENT ID
+                </span>
+                <p className="text-lg font-black font-mono text-zinc-900 mt-1 tracking-wider">
+                  {studentId ? `${studentId.slice(0, 4)} ${studentId.slice(4, 8)} ${studentId.slice(8, 12)}` : "Generating..."}
+                </p>
+                <p className="text-[11px] text-zinc-500 mt-0.5">
+                  You can use this 12-digit number or your email to sign in anytime.
+                </p>
+              </div>
+
+              {studentId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(studentId);
+                    setCopiedId(true);
+                    setTimeout(() => setCopiedId(false), 2000);
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl border border-pink-200 text-xs font-bold text-pink-700 bg-white hover:bg-pink-50 flex items-center gap-1.5 transition-colors self-start sm:self-center shadow-2xs"
+                >
+                  {copiedId ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="text-emerald-700 font-bold">Copied ID!</span>
+                    </>
+                  ) : (
+                    <span>Copy 12-Digit ID</span>
+                  )}
+                </button>
+              )}
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>

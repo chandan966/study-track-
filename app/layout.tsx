@@ -12,9 +12,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://study-track-drab.vercel.app"),
   title: "StudyTrack — Study Smarter, Track Your Progress",
   description:
-    "A modern student study tracker to manage study time, notes, tasks, goals, and academic progress.",
+    "A modern student study tracker to manage study time, notes, tasks, goals, and academic progress with verified certification.",
   keywords: [
     "study tracker",
     "student productivity",
@@ -22,8 +23,23 @@ export const metadata: Metadata = {
     "study streak",
     "academic progress",
     "revision tracker",
+    "study report card",
+    "certificate verification",
   ],
-  authors: [{ name: "StudyTrack Team" }],
+  authors: [{ name: "Chandan Ghanghav" }, { name: "StudyTrack Team" }],
+  creator: "Chandan Ghanghav",
+  publisher: "StudyTrack Platform",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -42,6 +58,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* Support for Google AdSense automatic verification */}
+        {process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID && (
+          <meta
+            name="google-adsense-account"
+            content={process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}
+          />
+        )}
+      </head>
       <body className={`${inter.className} min-h-screen bg-study-bg text-study-darkText antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
