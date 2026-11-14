@@ -102,6 +102,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Favicons & App Icons */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
         {/* Google Search Console Verification Meta Tag */}
         <meta name="google-site-verification" content="QzIzD4D1JoybATFVyO_goOP9uqYvKN7SO6EkKgTNu14" />
 
