@@ -4,7 +4,7 @@ export async function GET() {
   const pubId =
     process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID ||
     process.env.ADSENSE_PUB_ID ||
-    "pub-0000000000000000";
+    "pub-6527373182140065";
 
   // Normalize pub id format (strip "ca-" if entered as ca-pub-XXXX)
   const cleanPubId = pubId.replace(/^ca-/, "");

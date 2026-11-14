@@ -91,24 +91,20 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const adsenseId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID;
+  const adsenseClientId = "ca-pub-6527373182140065";
 
   return (
     <html lang="en">
       <head>
-        {/* Support for Google AdSense automatic verification meta tag */}
-        {adsenseId && (
-          <meta name="google-adsense-account" content={adsenseId} />
-        )}
+        {/* Google AdSense Account Verification Meta Tag */}
+        <meta name="google-adsense-account" content={adsenseClientId} />
 
-        {/* Support for Google AdSense official script tag */}
-        {adsenseId && (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseId}`}
-            crossOrigin="anonymous"
-          />
-        )}
+        {/* Google AdSense Official Script Tag */}
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+          crossOrigin="anonymous"
+        />
 
         {/* Schema.org Structured Data */}
         <script
