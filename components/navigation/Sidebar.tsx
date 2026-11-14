@@ -19,6 +19,7 @@ import {
   Settings,
   GraduationCap,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +38,7 @@ const mainNavItems = [
 ];
 
 const secondaryNavItems = [
+  { name: "Verify Certificate", href: "/verify", icon: ShieldCheck },
   { name: "Profile", href: "/profile", icon: User },
   { name: "Settings", href: "/settings", icon: Settings },
 ];

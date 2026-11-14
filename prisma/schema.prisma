@@ -34,6 +34,7 @@ model User {
   revisions            Revision[]
   achievements         UserAchievement[]
   notifications        Notification[]
+  certificates         StudyCertificate[]
 
   @@map("users")
 }
@@ -192,4 +193,28 @@ model Notification {
   createdAt DateTime @default(now())
 
   @@map("notifications")
+}
+
+model StudyCertificate {
+  id              String   @id @default(cuid())
+  certificateId   String   @unique
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String   @default("daily")
+  periodLabel     String
+  studentName     String
+  studentEmail    String
+  course          String?
+  college         String?
+  totalMinutes    Int
+  targetMinutes   Int
+  goalPercentage  Int
+  grade           String
+  gradeLabel      String
+  sessionCount    Int
+  tasksCompleted  Int
+  subjectSnapshot String
+  createdAt       DateTime @default(now())
+
+  @@map("study_certificates")
 }

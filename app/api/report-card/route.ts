@@ -184,11 +184,60 @@ export async function GET(req: Request) {
       gradeColor = "text-blue-700 bg-blue-50 border-blue-300";
     }
 
-    // Unique verification ID & seal
-    const sanitizedName = (userProfile?.name || "STUDENT").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
-    const dateStamp = format(targetDate, "yyyyMMdd");
-    const randomHash = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const certificateId = `ST-REC-${dateStamp}-${sanitizedName}-${randomHash}`;
+    // Check if a certificate is already recorded for this user, type, and period
+    let existingCert = await prisma.studyCertificate.findFirst({
+      where: {
+        userId: user.id,
+        type,
+        periodLabel,
+      },
+    });
+
+    let certificateId = existingCert?.certificateId;
+
+    if (!certificateId) {
+      const sanitizedName = (userProfile?.name || "STUDENT").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 4);
+      const dateStamp = format(targetDate, "yyyyMMdd");
+      const randomHash = Math.random().toString(36).substring(2, 6).toUpperCase();
+      certificateId = `ST-REC-${dateStamp}-${sanitizedName}-${randomHash}`;
+    }
+
+    // Upsert the persistent certificate in the database for public verification
+    await prisma.studyCertificate.upsert({
+      where: { certificateId },
+      update: {
+        totalMinutes: totalDuration,
+        targetMinutes: targetGoalMinutes,
+        goalPercentage,
+        grade,
+        gradeLabel,
+        sessionCount: sessions.length,
+        tasksCompleted: completedTasks.length,
+        subjectSnapshot: JSON.stringify(subjectBreakdown),
+        studentName: userProfile?.name || "Student Aspirant",
+        studentEmail: userProfile?.email || "",
+        course: userProfile?.course || "SSC CGL / Govt Exam & Tech",
+        college: userProfile?.college || "University / Institute",
+      },
+      create: {
+        certificateId,
+        userId: user.id,
+        type,
+        periodLabel,
+        studentName: userProfile?.name || "Student Aspirant",
+        studentEmail: userProfile?.email || "",
+        course: userProfile?.course || "SSC CGL / Govt Exam & Tech",
+        college: userProfile?.college || "University / Institute",
+        totalMinutes: totalDuration,
+        targetMinutes: targetGoalMinutes,
+        goalPercentage,
+        grade,
+        gradeLabel,
+        sessionCount: sessions.length,
+        tasksCompleted: completedTasks.length,
+        subjectSnapshot: JSON.stringify(subjectBreakdown),
+      },
+    });
 
     return NextResponse.json({
       type,

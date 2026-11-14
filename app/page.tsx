@@ -14,6 +14,7 @@ import {
   Sparkles,
   RotateCcw,
   Trophy,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -32,7 +33,7 @@ export default function LandingPage() {
             </span>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 text-xs font-semibold text-zinc-600">
+          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-zinc-600">
             <a href="#features" className="hover:text-brand-600 transition-colors">
               Features
             </a>
@@ -42,6 +43,13 @@ export default function LandingPage() {
             <a href="#preview" className="hover:text-brand-600 transition-colors">
               Previews
             </a>
+            <Link
+              href="/verify"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-pink-200 text-pink-700 bg-pink-50/70 hover:bg-pink-100 transition-colors font-bold"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-pink-600" />
+              <span>Verify Certificate</span>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -270,6 +278,36 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* 6.5. PARENT & INSTITUTIONAL VERIFICATION PORTAL SECTION */}
+      <section className="py-16 bg-gradient-to-r from-pink-50/60 via-white to-pink-50/60 border-b border-pink-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="p-8 sm:p-10 rounded-3xl bg-white border-2 border-pink-200 shadow-xl shadow-pink-500/5 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-3 max-w-lg">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-100 border border-pink-200 text-pink-700 text-xs font-bold">
+                <ShieldCheck className="w-4 h-4 text-pink-600" />
+                Parents, Mentors &amp; Institutions
+              </div>
+              <h3 className="text-2xl font-black text-zinc-900 tracking-tight">
+                Verify Student Study Hours &amp; Report Cards
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed">
+                Did your son, daughter, or student complete their 6 hours of study today? Enter their certificate HASH to instantly verify their authentic study sessions, attendance, and academic performance ledger.
+              </p>
+            </div>
+
+            <div className="shrink-0">
+              <Link href="/verify">
+                <Button size="lg" className="bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-700 hover:to-pink-600 text-white font-bold text-sm px-7 py-3 rounded-2xl shadow-lg shadow-pink-500/25 flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5" />
+                  <span>Verify Certificate Portal</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 7. CTA SECTION */}
       <section className="py-20 bg-gradient-to-tr from-brand-600 via-pink-600 to-brand-500 text-white text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
@@ -301,6 +339,9 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-6">
+            <Link href="/verify" className="font-bold text-pink-600 hover:text-pink-700">
+              Verify Certificate
+            </Link>
             <Link href="/login" className="hover:text-brand-600">
               Sign In
             </Link>

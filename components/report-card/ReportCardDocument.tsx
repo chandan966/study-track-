@@ -472,9 +472,11 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
         </div>
 
         {/* Bottom Micro-Footer */}
-        <div className="text-center text-[9px] text-zinc-400 pt-1 border-t border-zinc-100 flex items-center justify-between">
+        <div className="text-center text-[9px] text-zinc-400 pt-1.5 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-2">
           <span>StudyTrack Verified Academic Productivity Ledger</span>
-          <span className="font-mono text-pink-600 font-semibold">{data.certificateId}</span>
+          <span className="font-mono text-pink-600 font-bold">
+            Verify at: {typeof window !== "undefined" ? window.location.origin : ""}/verify?id={data.certificateId}
+          </span>
           <span>Certified Single-Page A4 Transcript</span>
         </div>
       </div>
