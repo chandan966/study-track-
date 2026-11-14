@@ -384,25 +384,25 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
                   </td>
                 </tr>
               ) : (
-                data.subjectBreakdown.slice(0, 5).map((sub, idx) => (
+                data.subjectBreakdown.map((sub, idx) => (
                   <tr key={idx} className="hover:bg-zinc-50/40">
-                    <td className="py-2 px-4 flex items-center gap-2 font-bold text-zinc-900">
+                    <td className="py-2.5 px-4 flex items-center gap-2 font-bold text-zinc-900">
                       <div
                         className="w-2.5 h-2.5 rounded-md shrink-0 shadow-2xs"
                         style={{ backgroundColor: sub.color }}
                       />
-                      <span className="truncate max-w-[240px]">{sub.name}</span>
+                      <span className="truncate max-w-[260px]">{sub.name}</span>
                     </td>
-                    <td className="py-2 px-3 text-center text-zinc-600 font-medium">
+                    <td className="py-2.5 px-3 text-center text-zinc-600 font-medium">
                       {sub.sessionCount}
                     </td>
-                    <td className="py-2 px-3 text-center text-zinc-600 font-medium">
+                    <td className="py-2.5 px-3 text-center text-zinc-600 font-medium">
                       {sub.uniqueTopicsCount}
                     </td>
-                    <td className="py-2 px-4 text-right font-bold text-zinc-900">
+                    <td className="py-2.5 px-4 text-right font-bold text-zinc-900">
                       {Math.floor(sub.duration / 60)}h {sub.duration % 60}m
                     </td>
-                    <td className="py-2 px-4 text-right">
+                    <td className="py-2.5 px-4 text-right">
                       <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-pink-50 text-pink-700 border border-pink-200">
                         {sub.percentage}%
                       </span>
@@ -414,51 +414,8 @@ export function ReportCardDocument({ data }: ReportCardDocumentProps) {
           </table>
         </div>
 
-        {/* 4. COMPACT STUDY LOG & CONCEPTUAL TAKEAWAYS */}
-        {data.sessions.length > 0 && (
-          <div className="rounded-2xl border border-zinc-200 p-3 bg-zinc-50/50 space-y-2 relative z-10">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-zinc-800 uppercase tracking-wider flex items-center gap-1.5 text-[10px]">
-                <BookOpen className="w-3.5 h-3.5 text-pink-600" />
-                Key Study Takeaways &amp; Learnings Log
-              </span>
-              <span className="text-[10px] text-zinc-400 font-medium">
-                {data.sessions.length} recorded session blocks
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              {data.sessions.slice(0, 4).map((sess, idx) => (
-                <div
-                  key={idx}
-                  className="p-2.5 rounded-xl bg-white border border-zinc-200/80 shadow-2xs space-y-1"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-zinc-900 text-xs truncate">
-                      {sess.subjectName}: <span className="font-medium text-zinc-600">{sess.topicName}</span>
-                    </span>
-                    <span className="text-[10px] font-mono text-pink-600 font-bold shrink-0 ml-1">
-                      {sess.durationFormatted}
-                    </span>
-                  </div>
-                  {sess.learned && (
-                    <p className="text-[10px] text-zinc-600 truncate">
-                      <strong className="text-zinc-800">Learned:</strong> {sess.learned}
-                    </p>
-                  )}
-                  {sess.understood && (
-                    <p className="text-[10px] text-emerald-700 truncate">
-                      <strong className="text-emerald-900">Understood:</strong> {sess.understood}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 5. BOTTOM SECTION: EXACT SEAL & HASH ON BOTTOM LEFT, SIGNATURES ON BOTTOM RIGHT */}
-        <div className="pt-3 border-t-2 border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
+        {/* 4. BOTTOM SECTION: EXACT SEAL & HASH ON BOTTOM LEFT, SIGNATURES ON BOTTOM RIGHT */}
+        <div className="pt-4 border-t-2 border-pink-100 flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
           {/* BOTTOM LEFT: Exactly as requested with Pink Round Seal, Title, Subtitle, and HASH pill */}
           <div className="flex items-center gap-3.5">
             {/* Round Pink Seal: STUDYTRACK VERIFIED */}
