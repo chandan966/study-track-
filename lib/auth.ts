@@ -15,18 +15,19 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "credentials",
       credentials: {
-        email: { label: "Email or 12-Digit Student ID", type: "text" },
+        email: { label: "Email, 12-Digit Student ID, or Mobile Number", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Please enter your Email or 12-Digit Student ID and password");
+          throw new Error("Please enter your Email, 12-Digit Student ID, or Mobile Number and password");
         }
 
         const identifier = credentials.email.trim();
         const isEmail = identifier.includes("@");
+        const digitsOnly = identifier.replace(/[^0-9]/g, "");
 
-        // Find user by either email or 12-digit studentId
+        // Find user by either email, 12-digit studentId, or phone/mobile number
         const user = isEmail
           ? await prisma.user.findUnique({
               where: {
@@ -38,12 +39,14 @@ export const authOptions: NextAuthOptions = {
                 OR: [
                   { studentId: identifier },
                   { email: identifier.toLowerCase() },
+                  { phone: identifier },
+                  ...(digitsOnly.length >= 10 ? [{ phone: digitsOnly }] : []),
                 ],
               },
             });
 
         if (!user || !user.password) {
-          throw new Error("No student account found with this Email or 12-Digit Student ID");
+          throw new Error("No student account found with this Email, 12-Digit Student ID, or Mobile Number");
         }
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
@@ -57,6 +60,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           studentId: user.studentId,
+          phone: user.phone,
           image: user.image,
         };
       },
@@ -69,6 +73,7 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.studentId = user.studentId;
+        token.phone = user.phone;
         token.picture = user.image;
       }
       return token;
@@ -79,6 +84,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.studentId = token.studentId as string | null | undefined;
+        session.user.phone = token.phone as string | null | undefined;
         session.user.image = token.picture as string | null | undefined;
       }
       return session;

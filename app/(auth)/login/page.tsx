@@ -67,7 +67,7 @@ export default function LoginPage() {
           Welcome back, Scholar!
         </h2>
         <p className="text-xs text-zinc-500">
-          Enter your Email Address or 12-Digit Student ID to access your dashboard.
+          Enter your 12-Digit Student ID, Email Address, or Mobile Number to access your dashboard.
         </p>
       </div>
 
@@ -81,24 +81,24 @@ export default function LoginPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email or 12-Digit Student ID */}
+              {/* Email, 12-Digit Student ID, or Mobile Number */}
               <div>
                 <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                  Email Address or 12-Digit Student ID
+                  12-Digit Student ID, Email Address, or Mobile Number
                 </label>
                 <div className="relative">
                   <Input
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="student@example.com or 202611140001"
+                    placeholder="e.g. 202636562931 / student@example.com / 9876543210"
                     required
                     className="pl-9 text-xs sm:text-sm"
                   />
                   <UserCheck className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                 </div>
                 <p className="text-[10px] text-zinc-400 mt-1">
-                  You can sign in with your registered email or official 12-digit student ID.
+                  Triple login supported: Enter your 12-digit Student ID, Email, or registered 10-digit Mobile Number.
                 </p>
               </div>
 

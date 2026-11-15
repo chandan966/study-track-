@@ -12,6 +12,7 @@ model User {
   name                 String
   email                String            @unique
   studentId            String?           @unique
+  phone                String?           @unique
   password             String
   image                String?
   college              String?

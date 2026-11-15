@@ -51,30 +51,34 @@ export async function POST(req: Request) {
 
       if (!identifier) {
         return NextResponse.json(
-          { error: "Please enter your 12-digit student ID or registered email." },
+          { error: "Please enter your 12-digit student ID, registered email, or mobile number." },
           { status: 400 }
         );
       }
 
       const isEmail = identifier.includes("@");
+      const digitsOnly = identifier.replace(/\D/g, "");
+      const phoneFilters = digitsOnly.length >= 10 ? [{ phone: digitsOnly }, { phone: identifier }] : [];
+
       const user = isEmail
         ? await prisma.user.findUnique({
             where: { email: identifier.toLowerCase() },
-            select: { id: true, name: true, email: true, studentId: true },
+            select: { id: true, name: true, email: true, phone: true, studentId: true },
           })
         : await prisma.user.findFirst({
             where: {
               OR: [
                 { studentId: identifier },
                 { email: identifier.toLowerCase() },
+                ...phoneFilters,
               ],
             },
-            select: { id: true, name: true, email: true, studentId: true },
+            select: { id: true, name: true, email: true, phone: true, studentId: true },
           });
 
       if (!user) {
         return NextResponse.json(
-          { error: "No student account found with this 12-digit Student ID or Email." },
+          { error: "No student account found with this 12-digit Student ID, Email, or Mobile Number." },
           { status: 404 }
         );
       }
@@ -120,6 +124,9 @@ export async function POST(req: Request) {
 
       // Find user
       const isEmail = identifier.includes("@");
+      const digitsOnly = identifier.replace(/\D/g, "");
+      const phoneFilters = digitsOnly.length >= 10 ? [{ phone: digitsOnly }, { phone: identifier }] : [];
+
       const user = isEmail
         ? await prisma.user.findUnique({
             where: { email: identifier.toLowerCase() },
@@ -129,6 +136,7 @@ export async function POST(req: Request) {
               OR: [
                 { studentId: identifier },
                 { email: identifier.toLowerCase() },
+                ...phoneFilters,
               ],
             },
           });

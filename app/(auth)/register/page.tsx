@@ -10,6 +10,7 @@ import {
   Lock,
   Mail,
   User,
+  Phone,
   CheckCircle2,
   Copy,
   ShieldCheck,
@@ -25,6 +26,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
@@ -36,6 +38,7 @@ export default function RegisterPage() {
   const [registeredData, setRegisteredData] = useState<{
     name: string;
     email: string;
+    phone?: string;
     studentId: string;
   } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -71,6 +74,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),
+          phone: phone.trim(),
           password,
           confirmPassword,
         }),
@@ -85,6 +89,7 @@ export default function RegisterPage() {
       setRegisteredData({
         name: data.user.name,
         email: data.user.email,
+        phone: data.user.phone,
         studentId: data.user.studentId,
       });
     } catch (err: any) {
@@ -198,17 +203,22 @@ export default function RegisterPage() {
                     )}
                   </div>
 
-                  {/* Dual Login Notice */}
-                  <div className="p-3 rounded-xl bg-blue-50/70 border border-blue-100 text-left space-y-1">
+                  {/* Triple Login Notice */}
+                  <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200 text-left space-y-1.5 shadow-2xs">
                     <p className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                      <span>Flexible Dual Login Supported</span>
+                      <span>Flexible Triple Login Supported</span>
                     </p>
                     <p className="text-[11px] text-blue-700 leading-relaxed">
-                      You can log in anytime using <strong>either</strong> your Email Address (
-                      <span className="underline">{registeredData.email}</span>) <strong>or</strong> your 12-Digit Student ID (
-                      <span className="font-mono font-bold">{registeredData.studentId}</span>) along with your password!
+                      You can sign in anytime using <strong>any</strong> of the three along with your password:
                     </p>
+                    <ul className="text-[11px] text-blue-800 space-y-0.5 list-disc list-inside font-medium">
+                      <li>12-Digit Student ID: <span className="font-mono font-bold text-pink-700">{formatStudentId(registeredData.studentId)}</span></li>
+                      <li>Email Address: <span className="underline font-semibold">{registeredData.email}</span></li>
+                      {registeredData.phone && (
+                        <li>Mobile Number: <span className="font-bold">{registeredData.phone}</span></li>
+                      )}
+                    </ul>
                   </div>
                 </div>
 
@@ -250,7 +260,7 @@ export default function RegisterPage() {
 
                   <div>
                     <label className="block text-xs font-semibold text-zinc-700 mb-1">
-                      Email Address
+                      Email Address <span className="text-pink-600 font-bold">*</span>
                     </label>
                     <div className="relative">
                       <Input
@@ -263,6 +273,26 @@ export default function RegisterPage() {
                       />
                       <Mail className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-zinc-700 mb-1">
+                      Mobile Number <span className="text-pink-600 font-bold">*</span>
+                    </label>
+                    <div className="relative">
+                      <Input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="e.g. 9876543210 (10 digits)"
+                        required
+                        className="pl-9"
+                      />
+                      <Phone className="w-4 h-4 text-zinc-400 absolute left-3 top-3" />
+                    </div>
+                    <p className="text-[10px] text-zinc-400 mt-1">
+                      Required for account recovery and direct mobile number sign-in.
+                    </p>
                   </div>
 
                   <div>

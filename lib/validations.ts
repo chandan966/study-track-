@@ -4,6 +4,10 @@ export const registerSchema = z
   .object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
+    phone: z
+      .string()
+      .min(10, "Mobile number must be at least 10 digits")
+      .regex(/^[0-9+\s\-()]{10,20}$/, "Please enter a valid mobile number (e.g. 9876543210)"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
@@ -13,7 +17,7 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: z.string().min(3, "Please enter your Email or 12-digit Student ID"),
+  email: z.string().min(3, "Please enter your Email, 12-digit Student ID, or Mobile Number"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -71,6 +75,13 @@ export const noteSchema = z.object({
 
 export const profileSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address").optional().nullable(),
+  phone: z
+    .string()
+    .regex(/^[0-9+\s\-()]{10,20}$/, "Please enter a valid mobile number")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
   college: z.string().optional().nullable(),
   course: z.string().optional().nullable(),
   branch: z.string().optional().nullable(),
